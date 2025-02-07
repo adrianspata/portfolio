@@ -7,7 +7,7 @@ interface ThumbnailStripProps {
 }
 
 const MAX_VISIBLE_THUMBNAILS = 40;
-const FALLBACK_IMAGE = "/images/_mark_ logo.jpg";
+const FALLBACK_IMAGE = "/images/marklogo.jpg"; 
 
 const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImage }) => {
   const [isVisible, setIsVisible] = useState(false);
