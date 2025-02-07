@@ -5,14 +5,14 @@ import "../Styles/GlobalStyles.css";
 import "../Styles/ProjectPage.css"; 
 
 const projects = [
-  { id: 1, image: "/images/SOT Maya - AGRUME side.jpg", name: "Maya Nilsen for SOT", date: "Apr 2024" },
-  { id: 2, image: "/images/SOT Mag cover plastic 3.jpg", name: "SOT Magazine", date: "Aug 2024" },
-  { id: 3, image: "/images/launch e-invite 30th.jpg", name: "SOT Launch Event", date: "June 2024" },
-  { id: 4, image: "public/images/godajf äppel bild.jpg", name: "SOT Godajf", date: "Sep 2024" },
-  { id: 5, image: "/images/squarecirc logo(new) .jpg", name: "SQUARE CIRC Logo", date: "Apr 2022" },
-  { id: 6, image: "/images/sunsun logo sketch.png", name: "SunSun Logo", date: "Feb 2020" },
-  { id: 7, image: "/images/sot mag cover opt4.jpg", name: "SOT Magazine", date: "Aug 2024" },
-  { id: 8, image: "/images/SOT Underbron final1.jpg", name: "Underbron x SOT Event", date: "Dec 2023" },
+  { id: 1, image: "/images/SOTMayaAGRUMEside.jpg", name: "Maya Nilsen for SOT", date: "Apr 2024" },
+  { id: 2, image: "/images/SOTMagcoverplastic3.jpg", name: "SOT Magazine", date: "Aug 2024" },
+  { id: 3, image: "/images/launcheinvite30th.jpg", name: "SOT Launch Event", date: "June 2024" },
+  { id: 4, image: "/images/godajfappelbild.jpg", name: "SOT Godajf", date: "Sep 2024" },
+  { id: 5, image: "/images/squarecirclogonew.jpg", name: "SQUARE CIRC Logo", date: "Apr 2022" },
+  { id: 6, image: "/images/sunsunlogosketch.png", name: "SunSun Logo", date: "Feb 2020" },
+  { id: 7, image: "/images/sotmagcoveropt4.jpg", name: "SOT Magazine", date: "Aug 2024" },
+  { id: 8, image: "/images/SOTUnderbronfinal1.jpg", name: "Underbron x SOT Event", date: "Dec 2023" },
 ];
 
 const ProjectsPage: React.FC = () => {
