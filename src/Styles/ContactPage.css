@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Pinyon+Script&family=Quicksand:wght@300..700&display=swap');
+
+.contact-page {
+    background-color: white;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden; 
+  }
+  
+  .contact-content {
+    text-align: center;
+  }
+  
+  .contact-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; 
+  }
+
+  .span {
+    color: #000;
+    font-weight: normal;
+  }
+  
+  .contact-content h1 {
+    font-size: 24px;
+    color: black;
+    margin-bottom: 20px;
+  }
+  
+  .contact-links a {
+    font-family: "Outfit", serif;
+    font-size: 18px;
+    color: #cc0000;
+    text-decoration: none;
+    font-weight: normal;
+  }
+  
+  .contact-links a:hover {
+    color: royalblue;
+    text-decoration: none;
+  }
+  

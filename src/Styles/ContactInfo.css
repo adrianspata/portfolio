@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Pinyon+Script&family=Quicksand:wght@300..700&display=swap');
+
+.contact-info {
+    font-family: "Outfit", serif;
+    font-weight: 400;
+    font-style: normal; 
+    font-size: 14px;
+    color: #cc0000;
+}
+
+.contact-info {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    z-index: 2;
+  }
+  
+  .contact-info a {
+    color: #cc0000;
+    font-weight: 400;
+    text-decoration: none;
+  }

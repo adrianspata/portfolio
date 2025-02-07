@@ -1,0 +1,14 @@
+.back-arrow {
+    position: absolute;
+    top: 40px;
+    left: 60px;
+    font-size: 20px;
+    color: #cc0000;
+    text-decoration: none;
+    font-weight: normal;
+  }
+  
+  .back-arrow:hover {
+    opacity: 0.8;
+  }
+  
