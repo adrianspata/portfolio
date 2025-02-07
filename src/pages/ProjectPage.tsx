@@ -30,6 +30,8 @@ const ProjectsPage: React.FC = () => {
         </div>
       </div>
 
+      <h2 className="projects-title">Selected Works</h2>
+
       <div className="projects-grid">
         {projects.map((project) => (
           <div key={project.id} className="project-card">
