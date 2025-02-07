@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import "../Styles/ThumbnailStrip.css";
 
 interface ThumbnailStripProps {
@@ -7,11 +7,10 @@ interface ThumbnailStripProps {
 }
 
 const MAX_VISIBLE_THUMBNAILS = 40;
-const FALLBACK_IMAGE = "public/images/_mark_ logo.jpg";
+const FALLBACK_IMAGE = "/images/_mark_ logo.jpg";
 
 const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImage }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -21,26 +20,11 @@ const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImag
 
   const toggleStrip = () => {
     setIsVisible((prev) => !prev);
-
-    if (timeoutId) clearTimeout(timeoutId);
-    if (!isVisible) {
-      const newTimeout = setTimeout(() => {
-        setIsVisible(false);
-      }, 9000);
-      setTimeoutId(newTimeout);
-    }
   };
 
-  // Stäng stripen automatiskt
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
     setIsVisible(true);
-    if (timeoutId) clearTimeout(timeoutId);
-
-    const newTimeout = setTimeout(() => {
-      setIsVisible(false);
-    }, 5000);
-    setTimeoutId(newTimeout);
   };
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
@@ -58,7 +42,7 @@ const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImag
     if (!isDragging || !scrollContainerRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; 
+    const walk = (x - startX) * 2;
     scrollContainerRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -66,18 +50,14 @@ const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImag
     setIsDragging(false);
   };
 
-  useEffect(() => {
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-    };
-  }, [timeoutId]);
-
   return (
-    <div className="thumbnail-container">
+    <>
+      {/* En enda pilknapp som växlar mellan ↑ och ↓ */}
       <button className="toggle-btn" onClick={toggleStrip}>
         {isVisible ? "↓" : "↑"}
       </button>
-      {isVisible && (
+
+      <div className={`thumbnail-strip-container ${isVisible ? "visible" : "hidden"}`}>
         <div
           className="thumbnail-strip"
           ref={scrollContainerRef}
@@ -93,12 +73,12 @@ const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImag
               alt={`thumbnail-${idx}`}
               className="thumbnail"
               onClick={() => handleImageClick(img)}
-              onError={handleImageError} 
+              onError={handleImageError}
             />
           ))}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

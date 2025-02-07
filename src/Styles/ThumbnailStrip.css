@@ -1,65 +1,83 @@
-.thumbnail-container {
-    position: fixed;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    z-index: 3;
-  }
-  
-  .toggle-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #cc0000;
-    cursor: pointer;
-    outline: none;
-  }
-  
-  .thumbnail-strip {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px;
-    background: none;
-  }
-  
-  .thumbnail {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-  }
-  
-  .toggle-btn:focus {
-    outline: none; 
-    border: none;
-  }
-  
-  .thumbnail-strip {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    padding: 10px;
-    background: white;
-    max-width: 80vw; 
-    white-space: nowrap;
-    cursor: grab;
-    user-select: none;
-  }
-  
-  .thumbnail-strip:active {
-    cursor: grabbing;
-  }
-  
-  .thumbnail {
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-    object-fit: cover;
-    border-radius: 5px;
-  }
-  
-  .thumbnail:hover {
-    opacity: 0.8;
-  }
-  
+/* Thumbnail-strip container */
+.thumbnail-strip-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background: none;
+  padding: 5px 0;
+}
+
+/* Thumbnail-strip */
+.thumbnail-strip {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px;
+  border-radius: 0px;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  max-width: 100%;
+  justify-content: center;
+}
+
+/* När stripen är synlig */
+.thumbnail-strip-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* När stripen är dold */
+.thumbnail-strip-container.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+/* Thumbnail-bilder */
+.thumbnail {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 0px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.thumbnail:hover {
+  transform: scale(1.1);
+}
+
+/* Pilknapp som växlar mellan ↑ och ↓ */
+.toggle-btn {
+  background: none;
+  border: none; /* Tar bort border */
+  font-size: 24px;
+  cursor: pointer;
+  color: #000000;
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px;
+  transition: bottom 0.3s ease-in-out;
+}
+
+/* När stripen är dold → Knappen är längst ner */
+.thumbnail-strip-container.hidden + .toggle-btn {
+  bottom: 10px;
+}
+
+/* När stripen är synlig → Knappen placeras över stripen */
+.thumbnail-strip-container.visible + .toggle-btn {
+  bottom: 120px; /* Justera så att den ligger precis över stripen */
+}
+
+.toggle-btn:focus {
+  outline: none;
+}
+
+.toggle-btn:hover {
+  opacity: 0.8;
+}
