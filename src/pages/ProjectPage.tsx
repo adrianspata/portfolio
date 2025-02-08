@@ -13,6 +13,13 @@ const projects = [
   { id: 6, image: "/images/sunsunlogosketch.png", name: "SunSun Logo", date: "Feb 2020" },
   { id: 7, image: "/images/sotmagcoveropt4.jpg", name: "SOT Magazine", date: "Aug 2024" },
   { id: 8, image: "/images/SOTUnderbronfinal1.jpg", name: "Underbron x SOT Event", date: "Dec 2023" },
+  { id: 9, image: "/images/Aluminumziplock1.jpg", name: "Aluminum Ziplock Pouch", date: "Sep 2024" },
+  { id: 10, image: "/images/drinkglasincense.jpg", name: "SOT - AI Incense", date: "Mars 2024" },
+  { id: 11, image: "/images/IMG1578.PNG", name: "7-Eleven Pyjamas", date: "Feb 2021" },
+  { id: 12, image: "/images/loopliblogo.jpg", name: "LoopLib Logo", date: "Nov 2022" },
+  { id: 13, image: "/images/louis3sticksb&w.jpg", name: "Louis Wood for SOT", date: "Juli 2024" },
+  { id: 14, image: "/images/mastikpacksottext3.jpg", name: "Incense Packaging for SOT", date: "May 2024" },
+  { id: 15, image: "/images/nytanincenseblur.jpg", name: "Blurry Incense for SOT", date: "Nov 2024" },
 ];
 
 const ProjectsPage: React.FC = () => {
@@ -22,13 +29,13 @@ const ProjectsPage: React.FC = () => {
 
       <Link to="/" className="back-arrow">←</Link>
 
-      <div className="top-links">
+      {/* <div className="top-links">
         <div className="external-links">
           <a href="https://www.linkedin.com/in/adrian-spata-5573901a0/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <span>⎢</span>
           <a href="https://github.com/adrianspata" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
-      </div>
+      </div> */}
 
       <h2 className="projects-title">Selected Works</h2>
 
