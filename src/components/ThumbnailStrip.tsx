@@ -30,12 +30,10 @@ const ThumbnailStrip: React.FC<ThumbnailStripProps> = ({ images, setSelectedImag
 
   return (
     <>
-      {/* Pilknapp som byter riktning beroende på om stripen är synlig */}
       <button className={`toggle-btn ${isVisible ? "above" : "below"}`} onClick={toggleStrip}>
         {isVisible ? "↓" : "↑"}
       </button>
 
-      {/* Thumbnail-stripen som visas/döljs */}
       <div className={`thumbnail-strip-container ${isVisible ? "visible" : "hidden"}`}>
         <div className="thumbnail-strip" ref={scrollContainerRef}>
           {displayedImages.map((img, idx) => (

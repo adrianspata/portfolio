@@ -22,7 +22,6 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        {/* Startsida */}
         <Route path="/" element={
           <div className="app">
             <Header />
@@ -33,10 +32,8 @@ const App: React.FC = () => {
           </div>
         } />
 
-        {/* Kontaktsida */}
         <Route path="/contact" element={<ContactPage />} />
 
-        {/* Projektsida */}
         <Route path="/projects" element={<ProjectsPage />} />
       </Routes>
     </Router>

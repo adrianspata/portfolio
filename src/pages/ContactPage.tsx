@@ -7,7 +7,6 @@ import "../Styles/ContactPage.css";
 const ContactPage: React.FC = () => {
   return (
     <div className="contact-page">
-      {/* Header från startsidan */}
       <Header />
 
       <Link to="/" className="back-arrow">←</Link>

@@ -29,14 +29,6 @@ const ProjectsPage: React.FC = () => {
 
       <Link to="/" className="back-arrow">←</Link>
 
-      {/* <div className="top-links">
-        <div className="external-links">
-          <a href="https://www.linkedin.com/in/adrian-spata-5573901a0/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <span>⎢</span>
-          <a href="https://github.com/adrianspata" target="_blank" rel="noopener noreferrer">GitHub</a>
-        </div>
-      </div> */}
-
       <h2 className="projects-title">Selected Works</h2>
 
       <div className="projects-grid">

@@ -13,12 +13,10 @@
     padding: 0px;
 }
 
-/* Kontaktinnehåll */
 .contact-content {
     text-align: center;
 }
 
-/* Kontaktlänkar - Desktop */
 .contact-links {
     display: flex;
     align-items: center;
@@ -26,20 +24,17 @@
     gap: 10px; 
 }
 
-/* Separationssymbol */
 .span {
     color: #000;
     font-weight: normal;
 }
 
-/* Titel */
 .contact-content h1 {
     font-size: 24px;
     color: black;
     margin-bottom: 20px;
 }
 
-/* Länkar */
 .contact-links a {
     font-family: "Outfit", serif;
     font-size: 18px;
@@ -54,14 +49,13 @@
     text-decoration: none;
 }
 
-/* === Responsiv design === */
 @media (max-width: 768px) {
     .contact-links {
-        flex-direction: column; /* Staplar länkar vertikalt på mobil */
+        flex-direction: column; 
         gap: 10px;
     }
 
     .span {
-        display: none; /* Dölj separatorn (⎢) på mobil */
+        display: none; 
     }
 }

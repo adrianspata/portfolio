@@ -32,7 +32,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     }
   }, [selectedImage, images]);
 
-  // Automatisk bildväxling (om användaren inte har interagerat)
+  // Automatisk bildväxling 
   useEffect(() => {
     if (isManualSelection || isDragging) return;
 
@@ -43,7 +43,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     return () => clearInterval(interval);
   }, [isManualSelection, isDragging, images]);
 
-  // Click & Drag-funktionalitet
+  // Click & Drag-funktion
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     setStartX(e.clientX);
@@ -58,16 +58,16 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     setIsDragging(false);
 
     if (deltaX > 50) {
-      // Dra till vänster -> Föregående bild
+      // Dra till vänster 
       setIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
     } else if (deltaX < -50) {
-      // Dra till höger -> Nästa bild
+      // Dra till höger 
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
     }
 
     setDeltaX(0);
 
-    // Återuppta autoplay efter 4 sekunder
+    // Återuppta autoplay efter x sekunder
     setIsManualSelection(true);
     setTimeout(() => setIsManualSelection(false), 4000);
   };
@@ -79,7 +79,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp} // För att hantera om musen dras utanför komponenten
+      onMouseLeave={handleMouseUp}
     >
       <img src={images[index]} alt="carousel" className="carousel-image" />
     </div>
