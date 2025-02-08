@@ -7,7 +7,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    cursor: grab;
+    cursor:pointer;
     user-select: none;
     overflow: hidden;
   }

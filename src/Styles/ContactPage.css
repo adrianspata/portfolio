@@ -10,40 +10,58 @@
     justify-content: center;
     position: relative;
     overflow: hidden; 
-  }
-  
-  .contact-content {
+    padding: 0px;
+}
+
+/* Kontaktinnehåll */
+.contact-content {
     text-align: center;
-  }
-  
-  .contact-links {
+}
+
+/* Kontaktlänkar - Desktop */
+.contact-links {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px; 
-  }
+    gap: 10px; 
+}
 
-  .span {
+/* Separationssymbol */
+.span {
     color: #000;
     font-weight: normal;
-  }
-  
-  .contact-content h1 {
+}
+
+/* Titel */
+.contact-content h1 {
     font-size: 24px;
     color: black;
     margin-bottom: 20px;
-  }
-  
-  .contact-links a {
+}
+
+/* Länkar */
+.contact-links a {
     font-family: "Outfit", serif;
     font-size: 18px;
     color: #cc0000;
     text-decoration: none;
     font-weight: normal;
-  }
-  
-  .contact-links a:hover {
+    transition: color 0.3s ease-in-out;
+}
+
+.contact-links a:hover {
     color: royalblue;
     text-decoration: none;
-  }
-  
+}
+
+/* === Responsiv design === */
+@media (max-width: 768px) {
+    .contact-links {
+        flex-direction: column; /* Staplar länkar vertikalt på mobil */
+        gap: 10px;
+    }
+
+    .span {
+        display: none; /* Dölj separatorn (⎢) på mobil */
+    }
+}

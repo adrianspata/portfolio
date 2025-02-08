@@ -2,16 +2,16 @@
 
 .description {
     position: absolute;
-    bottom: 20px;
+    bottom: 60px;
     right: 20px;
-    width: 40vw;
+    width: 50vw;
     color: #cc0000;
     text-align: right;
     z-index: 2;
     font-family: "Outfit", serif;
     font-weight: 400;
     font-style: normal;   
-    font-size: 14px; 
+    font-size: 15px; 
     color: #cc0000;
   }
   
