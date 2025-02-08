@@ -68,7 +68,7 @@
 .project-card img {
     width: 100%;
     max-width: 250px; 
-    height: 250px;
+    height: 300px;
     object-fit: cover;
     object-position: top;
     border: solid 1px #cc0000;

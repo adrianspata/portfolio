@@ -69,7 +69,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
 
     // Återuppta autoplay efter x sekunder
     setIsManualSelection(true);
-    setTimeout(() => setIsManualSelection(false), 4000);
+    setTimeout(() => setIsManualSelection(false), 1000);
   };
 
   return (
