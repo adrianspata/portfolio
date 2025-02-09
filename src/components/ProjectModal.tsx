@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import "../Styles/ProjectModal.css";
 
 interface Project {
@@ -18,15 +18,19 @@ interface ProjectModalProps {
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, currentImageIndex, setCurrentImageIndex, closeModal }) => {
   
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % project.images.length);
-  };
+  }, [setCurrentImageIndex, project.images.length]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     setCurrentImageIndex((prevIndex) => 
       prevIndex === 0 ? project.images.length - 1 : prevIndex - 1
     );
-  };
+  }, [setCurrentImageIndex, project.images.length]);
+
+  const handleCloseModal = useCallback(() => {
+    closeModal();
+  }, [closeModal]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -35,7 +39,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, currentImageIndex,
       } else if (event.key === "ArrowLeft") {
         prevImage();
       } else if (event.key === "Escape") {
-        closeModal();
+        handleCloseModal();
       }
     };
 
@@ -44,12 +48,12 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, currentImageIndex,
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [nextImage, prevImage, handleCloseModal]); 
 
   return (
-    <div className="modal-overlay" onClick={closeModal}>
+    <div className="modal-overlay" onClick={handleCloseModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-btn" onClick={closeModal}>×</button>
+        <button className="close-btn" onClick={handleCloseModal}>×</button>
         
         <div className="modal-carousel">
           <button className="prev-btn" onClick={prevImage}>‹</button>
