@@ -48,25 +48,30 @@
 .toggle-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 24px; 
   cursor: pointer;
   color: #cc0000;
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  padding: 5px;
+  padding: 20px 20px; 
   transition: bottom 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0.5;
 }
 
 .toggle-btn:focus {
   outline: none;
-  box-shadow: none; 
+  box-shadow: none;
 }
 
 .toggle-btn.below {
-  bottom: 10px;
+  bottom: 0px;
 }
 
 .toggle-btn.above {
-  bottom: 48px; 
+  bottom: 40px; 
 }
+

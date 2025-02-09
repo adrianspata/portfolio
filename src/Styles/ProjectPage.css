@@ -74,7 +74,12 @@
     border: solid 1px #cc0000;
     border-radius: 0px;
     background-color: #f0f0f0;
+    cursor: pointer;
 }
+
+/* .project-card img:hover {
+    transform: scale(1.02);
+  } */
 
 .project-card p {
     font-family: "Outfit", serif;

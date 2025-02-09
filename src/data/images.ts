@@ -49,6 +49,9 @@ export const images: string[] = [
   "/images/cloudsS.png",
   "/images/SZNSEAZONlogo.jpg",
   "/images/chairlogo.png",
+  "/images/robP5.jpg",
+  "/images/louisex4.jpg",
+  "public/images/louisSmell5.jpg",
 ];
 
 // Funktion för att blanda listan av bilder
