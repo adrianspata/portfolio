@@ -51,24 +51,24 @@ const projects = [
   },
   { 
     id: 6, 
-    images: ["/images/sotWebpage.jpg", "/images/sotWebpage2.jpg"], 
+    images: ["/images/sotWebpage.jpg"], 
     name: "SOT Webdesign", 
     date: "Feb 2024", 
     description: "Website design for SOT, focusing on modern minimalism."
   },
   { 
     id: 7, 
-    images: ["/images/sotBagSteps2.jpg", "/images/sotBagSteps3.jpg"], 
+    images: ["/images/sotBagSteps2.jpg", "/images/sotBagLegs.jpg"], 
     name: "Campaign for SOT", 
     date: "Juli 2024", 
-    description: "A campaign showcasing the step-by-step process of SOT bag designs."
+    description: "Creative direction and design for SOT."
   },
   { 
     id: 8, 
-    images: ["/images/Aluminumziplock1.jpg", "/images/Aluminumziplock2.jpg"], 
+    images: ["/images/Aluminumziplock1.jpg"], 
     name: "Aluminum Ziplock Pouch", 
     date: "Sep 2024", 
-    description: "A modern take on incense packaging, designed for functionality and aesthetics."
+    description: "Packaging design for SOT objects."
   },
   { 
     id: 9, 
