@@ -6,6 +6,8 @@ interface CarouselProps {
   images: string[];
 }
 
+const FALLBACK_IMAGE = "/images/sotmagcoveropt4.jpg"; 
+
 const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
   const [index, setIndex] = useState(0);
   const [isManualSelection, setIsManualSelection] = useState(false);
@@ -25,20 +27,20 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
         // Återuppta autoplay
         const resumeAutoplay = setTimeout(() => {
           setIsManualSelection(false);
-        }, 0);
+        }, 1000);
 
         return () => clearTimeout(resumeAutoplay);
       }
     }
   }, [selectedImage, images]);
 
-  // Automatisk bildväxling 
+  // Automatisk bildväxling
   useEffect(() => {
     if (isManualSelection || isDragging) return;
 
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 800);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [isManualSelection, isDragging, images]);
@@ -58,10 +60,8 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     setIsDragging(false);
 
     if (deltaX > 50) {
-      // Dra till vänster 
       setIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
     } else if (deltaX < -50) {
-      // Dra till höger 
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
     }
 
@@ -70,6 +70,10 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     // Återuppta autoplay efter x sekunder
     setIsManualSelection(true);
     setTimeout(() => setIsManualSelection(false), 1000);
+  };
+
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    event.currentTarget.src = FALLBACK_IMAGE;
   };
 
   return (
@@ -81,7 +85,12 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <img src={images[index]} alt="carousel" className="carousel-image" />
+      <img
+        src={images[index]}
+        alt="carousel"
+        className="carousel-image"
+        onError={handleImageError} 
+      />
     </div>
   );
 };
