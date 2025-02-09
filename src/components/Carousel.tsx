@@ -40,7 +40,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
 
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [isManualSelection, isDragging, images]);

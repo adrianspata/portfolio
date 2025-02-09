@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../Styles/ProjectModal.css";
 
-// Definiera en typ för projektobjektet
 interface Project {
   id: number;
   images: string[];
@@ -29,15 +28,44 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, currentImageIndex,
     );
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowRight") {
+        nextImage();
+      } else if (event.key === "ArrowLeft") {
+        prevImage();
+      } else if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="modal-overlay" onClick={closeModal}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={closeModal}>×</button>
+        
         <div className="modal-carousel">
           <button className="prev-btn" onClick={prevImage}>‹</button>
           <img src={project.images[currentImageIndex]} alt="Project" className="modal-image" />
           <button className="next-btn" onClick={nextImage}>›</button>
         </div>
+
+        <div className="image-indicator">
+          {project.images.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === currentImageIndex ? "active" : ""}`}
+            />
+          ))}
+        </div>
+
         <p className="modal-description">{project.description}</p>
       </div>
     </div>
