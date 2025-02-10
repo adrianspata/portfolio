@@ -2,9 +2,9 @@
 
 .description {
     position: absolute;
-    bottom: 60px;
+    bottom: 80px;
     right: 20px;
-    width: 50vw;
+    width: 60vw;
     color: #cc0000;
     text-align: right;
     z-index: 2;

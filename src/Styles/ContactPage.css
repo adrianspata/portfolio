@@ -49,6 +49,22 @@
     text-decoration: none;
 }
 
+.local-time {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Outfit", sans-serif;
+    font-size: 16px;
+    color: #cc0000;
+    text-decoration: none;
+    font-weight: normal;
+    text-align: center;
+    font-variant-numeric: tabular-nums; 
+    width: 200px; 
+}
+
+
 @media (max-width: 768px) {
     .contact-links {
         flex-direction: column; 

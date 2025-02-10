@@ -4,8 +4,8 @@ import "../Styles/Description.css";
 const Description: React.FC = () => {
   return (
     <div className="description">
-      Adrian Spata is a Stockholm-based digital designer & fullstack developer specializing in a wide range of creative services.<br /><br />
-      With expertise in graphic design, logo creation, web development & web design, product & packaging design and 3D modeling, Adrian blends creativity with technical precision to bring ideas to life.
+    Adrian Spata is a Stockholm-based digital designer & full-stack developer. Specializing in creative direction, visual identity, & graphic design, his expertise extends to print and packaging design, web development, & illustration.<br /><br /> 
+    With a foundation in branding, user experience & 3D modeling, he has a vision to craft compelling digital and physical experiences.
     </div>
   );
 };

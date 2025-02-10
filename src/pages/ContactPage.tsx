@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header"; 
 import "../Styles/GlobalStyles.css"; 
 import "../Styles/ContactPage.css"; 
 
 const ContactPage: React.FC = () => {
+  const [time, setTime] = useState<string>("");
+  const [location, setLocation] = useState<string>("Loading...");
+
+  useEffect(() => {
+    const updateTimeAndLocation = () => {
+      const now = new Date();
+      const formattedTime = new Intl.DateTimeFormat([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        // timeZoneName: "short",
+      }).format(now);
+
+      setTime(formattedTime);
+
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const cityName = timeZone.split("/").pop()?.replace("_", " ") || "Unknown";
+      setLocation(cityName);
+    };
+
+    updateTimeAndLocation(); 
+    const interval = setInterval(updateTimeAndLocation, 1000); 
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="contact-page">
       <Header />
@@ -20,9 +46,11 @@ const ContactPage: React.FC = () => {
           <a href="https://www.linkedin.com/in/adrian-spata-5573901a0/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <span className="span">⎢</span>
           <a href="https://github.com/adrianspata" target="_blank" rel="noopener noreferrer">GitHub</a>
-          <span className="span">⎢</span>
-          <Link to="/" className="home-link">Home</Link>
         </div>
+      </div>
+
+      <div className="local-time">
+        {location} ⎢ {time}
       </div>
     </div>
   );
