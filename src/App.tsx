@@ -16,7 +16,7 @@ const App: React.FC = () => {
     setShuffledImages(shuffleImages(images));
   }, []);
 
-  const [selectedImage, setSelectedImage] = useState<string | null>(shuffledImages[0]);
+  const [selectedImage] = useState<string | null>(shuffledImages[0]);
 
   return (
     <Router>
