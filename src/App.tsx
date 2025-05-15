@@ -26,7 +26,6 @@ const App: React.FC = () => {
             <Header />
             <ContactInfo />
             <Carousel selectedImage={selectedImage} images={shuffledImages} />
-            <ThumbnailStrip images={shuffledImages} setSelectedImage={setSelectedImage} />
             <Description />
           </div>
         } />
