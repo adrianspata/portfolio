@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import ContactInfo from "./components/ContactInfo";
 import Carousel from "./components/Carousel";
-import ThumbnailStrip from "./components/ThumbnailStrip";
 import Description from "./components/Description";
 import ContactPage from "./pages/ContactPage"; 
 import ProjectsPage from "./pages/ProjectPage";
