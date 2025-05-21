@@ -1,122 +1,125 @@
-import React, { useEffect, useCallback, useRef } from "react";
-import "../Styles/ProjectModal.css";
+// import React, { useEffect, useCallback, useRef } from "react";
+// import "../Styles/ProjectModal.css";
 
-interface Project {
-  id: number;
-  images: string[];
-  name: string;
-  date: string;
-  description: string;
-}
+// interface Project {
+//   id: number;
+//   images: string[];
+//   name: string;
+//   date: string;
+//   description: string;
+// }
 
-interface ProjectModalProps {
-  project: Project;
-  currentImageIndex: number;
-  setCurrentImageIndex: React.Dispatch<React.SetStateAction<number>>;
-  closeModal: () => void;
-}
+// interface ProjectModalProps {
+//   project: Project;
+//   currentImageIndex: number;
+//   setCurrentImageIndex: React.Dispatch<React.SetStateAction<number>>;
+//   closeModal: () => void;
+// }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({ 
-  project, 
-  currentImageIndex, 
-  setCurrentImageIndex, 
-  closeModal 
-}) => {
+// const ProjectModal: React.FC<ProjectModalProps> = ({
+//   project,
+//   currentImageIndex,
+//   setCurrentImageIndex,
+//   closeModal
+// }) => {
+//   const touchStartX = useRef<number | null>(null);
 
-  const touchStartX = useRef<number | null>(null);
+//   const hasMultipleImages = project.images.length > 1;
 
-  // Byt till nästa bild
-  const nextImage = useCallback(() => {
-    setCurrentImageIndex((prevIndex) => (prevIndex + 1) % project.images.length);
-  }, [setCurrentImageIndex, project.images.length]);
+//   const nextImage = useCallback(() => {
+//     if (!hasMultipleImages) return;
+//     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % project.images.length);
+//   }, [setCurrentImageIndex, project.images.length, hasMultipleImages]);
 
-  // Byt till föregående bild
-  const prevImage = useCallback(() => {
-    setCurrentImageIndex((prevIndex) => 
-      prevIndex === 0 ? project.images.length - 1 : prevIndex - 1
-    );
-  }, [setCurrentImageIndex, project.images.length]);
+//   const prevImage = useCallback(() => {
+//     if (!hasMultipleImages) return;
+//     setCurrentImageIndex((prevIndex) =>
+//       prevIndex === 0 ? project.images.length - 1 : prevIndex - 1
+//     );
+//   }, [setCurrentImageIndex, project.images.length, hasMultipleImages]);
 
-  // Stäng modalen
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+//   const handleCloseModal = useCallback(() => {
+//     closeModal();
+//   }, [closeModal]);
 
-  // Hantera tangentbordskontroller
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight") nextImage();
-      else if (event.key === "ArrowLeft") prevImage();
-      else if (event.key === "Escape") handleCloseModal();
-    };
+//   useEffect(() => {
+//     const handleKeyDown = (event: KeyboardEvent) => {
+//       if (event.key === "ArrowRight") nextImage();
+//       else if (event.key === "ArrowLeft") prevImage();
+//       else if (event.key === "Escape") handleCloseModal();
+//     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextImage, prevImage, handleCloseModal]);
+//     window.addEventListener("keydown", handleKeyDown);
+//     return () => window.removeEventListener("keydown", handleKeyDown);
+//   }, [nextImage, prevImage, handleCloseModal]);
 
-  // Hantera klick på bildens sidor
-  const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
-    const { clientX, currentTarget } = e;
-    const middle = currentTarget.getBoundingClientRect().width / 2;
-    
-    if (clientX < middle) {
-      prevImage();
-    } else {
-      nextImage();
-    }
-  };
+//   const handleImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+//     if (!hasMultipleImages) return;
+//     const { clientX, currentTarget } = e;
+//     const middle = currentTarget.getBoundingClientRect().width / 2;
 
-  // Hantera swipe på mobil
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
+//     if (clientX < middle) {
+//       prevImage();
+//     } else {
+//       nextImage();
+//     }
+//   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+//   const handleTouchStart = (e: React.TouchEvent) => {
+//     if (!hasMultipleImages) return;
+//     touchStartX.current = e.touches[0].clientX;
+//   };
 
-    const touchEndX = e.changedTouches[0].clientX;
-    const diffX = touchStartX.current - touchEndX;
+//   const handleTouchEnd = (e: React.TouchEvent) => {
+//     if (!hasMultipleImages || touchStartX.current === null) return;
 
-    if (diffX > 50) {
-      nextImage(); 
-    } else if (diffX < -50) {
-      prevImage(); 
-    }
+//     const touchEndX = e.changedTouches[0].clientX;
+//     const diffX = touchStartX.current - touchEndX;
 
-    touchStartX.current = null;
-  };
+//     if (diffX > 50) nextImage();
+//     else if (diffX < -50) prevImage();
 
-  return (
-    <div className="modal-overlay" onClick={handleCloseModal}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="close-btn" onClick={handleCloseModal}>×</button>
-        
-        <div 
-          className="modal-carousel" 
-          onTouchStart={handleTouchStart} 
-          onTouchEnd={handleTouchEnd}
-        >
-          <img 
-            src={project.images[currentImageIndex]} 
-            alt="Project" 
-            className="modal-image" 
-            onClick={handleImageClick} 
-          />
-        </div>
+//     touchStartX.current = null;
+//   };
 
-        <div className="image-indicator">
-          {project.images.map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === currentImageIndex ? "active" : ""}`}
-            />
-          ))}
-        </div>
+//   return (
+//     <div className="modal-overlay" onClick={handleCloseModal}>
+//       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+//         <button className="close-btn" onClick={handleCloseModal}>
+//   <i className="fa-solid fa-xmark"></i>
+// </button>
 
-        <p className="modal-description">{project.description}</p>
-      </div>
-    </div>
-  );
-};
+//         <h2 className="modal-title">{project.name}</h2>
+//         <p className="modal-date">{project.date}</p>
 
-export default ProjectModal;
+//         <div
+//           className="modal-carousel"
+//           onTouchStart={handleTouchStart}
+//           onTouchEnd={handleTouchEnd}
+//         >
+//           <img
+//             src={project.images[currentImageIndex]}
+//             alt={project.name}
+//             className="modal-image"
+//             onClick={handleImageClick}
+//           />
+//         </div>
+
+//         {hasMultipleImages && (
+//           <div className="image-indicator">
+//             {project.images.map((_, index) => (
+//               <span
+//                 key={index}
+//                 className={`dot ${index === currentImageIndex ? "active" : ""}`}
+//               />
+//             ))}
+//           </div>
+//         )}
+
+//         <p className="modal-description">{project.description}</p>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ProjectModal;

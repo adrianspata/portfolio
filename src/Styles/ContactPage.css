@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Pinyon+Script&family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 .contact-page {
     background-color: white;
@@ -21,7 +22,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; 
+    gap: 18px; 
 }
 
 .span {
@@ -30,17 +31,17 @@
 }
 
 .contact-content h1 {
-    font-size: 24px;
+    font-size: 20px;
     color: black;
     margin-bottom: 20px;
 }
 
 .contact-links a {
-    font-family: "Outfit", serif;
+    font-family: "Work Sans", sans-serif;
     font-size: 18px;
     color: #cc0000;
     text-decoration: none;
-    font-weight: normal;
+    font-weight: 600;
     transition: color 0.3s ease-in-out;
 }
 
@@ -54,14 +55,14 @@
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    font-family: "Outfit", sans-serif;
+    font-family: "Work Sans", sans-serif;
     font-size: 16px;
     color: #cc0000;
     text-decoration: none;
-    font-weight: normal;
+    font-weight: 600;
     text-align: center;
-    font-variant-numeric: tabular-nums; 
-    width: 200px; 
+    /* font-variant-numeric: tabular-nums;  */
+    width: 220px; 
 }
 
 

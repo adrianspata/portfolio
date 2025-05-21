@@ -1,0 +1,57 @@
+.project-detail-page {
+  background-color: #fff;
+  padding: 40px 20px;
+  min-height: 100vh;
+}
+
+.project-detail-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.project-text {
+  text-align: left;
+  margin-bottom: 30px;
+  font-family: 'Outfit', sans-serif;
+  color: #000;
+}
+
+/* Masonry via CSS Columns */
+.project-images {
+  column-count: 3;       /* 3 kolumner på stora skärmar */
+  column-gap: 20px;      /* avstånd mellan kolumner */
+  /* optional: padding-top för spacing */
+}
+
+/* Varje bild-wrappper måste vara inline-block för columns och undvika split */
+.image-item {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 20px;   /* vertikalt gap */
+  break-inside: avoid;   /* bryt inte bilden över två kolumner */
+}
+
+.image-item img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.image-item img:hover {
+  transform: scale(1.05);
+}
+
+/* Responsivt: färre kolumner på mindre skärmar */
+@media (max-width: 1024px) {
+  .project-images {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .project-images {
+    column-count: 1;
+  }
+}

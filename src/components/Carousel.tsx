@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "../Styles/Carousel.css";
 
 interface CarouselProps {
@@ -6,7 +7,7 @@ interface CarouselProps {
   images: string[];
 }
 
-const FALLBACK_IMAGE = "/images/sotmagcoveropt4.jpg"; 
+const FALLBACK_IMAGE = "/images/sotmagcoveropt4.jpg";
 
 const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
   const [index, setIndex] = useState(0);
@@ -15,37 +16,30 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
   const [startX, setStartX] = useState(0);
   const [deltaX, setDeltaX] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate(); // 👈 Lägg till
 
-  // Om en bild väljs från ThumbnailStrip, uppdatera index och pausa autoplay
   useEffect(() => {
     if (selectedImage) {
       const newIndex = images.indexOf(selectedImage);
       if (newIndex !== -1) {
         setIndex(newIndex);
         setIsManualSelection(true);
-
-        // Återuppta autoplay
         const resumeAutoplay = setTimeout(() => {
           setIsManualSelection(false);
         }, 1000);
-
         return () => clearTimeout(resumeAutoplay);
       }
     }
   }, [selectedImage, images]);
 
-  // Automatisk bildväxling
   useEffect(() => {
     if (isManualSelection || isDragging) return;
-
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 1000);
-
+    }, 2000);
     return () => clearInterval(interval);
   }, [isManualSelection, isDragging, images]);
 
-  // Click & Drag-funktion
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     setStartX(e.clientX);
@@ -58,22 +52,24 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
 
   const handleMouseUp = () => {
     setIsDragging(false);
-
     if (deltaX > 50) {
       setIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
     } else if (deltaX < -50) {
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
     }
-
     setDeltaX(0);
-
-    // Återuppta autoplay efter x sekunder
     setIsManualSelection(true);
     setTimeout(() => setIsManualSelection(false), 1000);
   };
 
   const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
     event.currentTarget.src = FALLBACK_IMAGE;
+  };
+
+  const handleImageClick = () => {
+    if (!isDragging) {
+      navigate("/projects"); // 👈 Navigera till projekt
+    }
   };
 
   return (
@@ -89,7 +85,8 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
         src={images[index]}
         alt="carousel"
         className="carousel-image"
-        onError={handleImageError} 
+        onError={handleImageError}
+        onClick={handleImageClick} // 👈 Lägg till klick
       />
     </div>
   );

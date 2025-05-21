@@ -13,11 +13,10 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <Link to={isProjectsPage ? "/" : "/projects"} className="plus-btn">
-        {isProjectsPage ? "{−}" : "{+}"}
+        <i className={`fa-solid ${isProjectsPage ? "fa-minus" : "fa-plus"}`}></i>
       </Link>
     </header>
   );
 };
 
 export default Header;
-

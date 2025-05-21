@@ -7,6 +7,7 @@ import Description from "./components/Description";
 import ContactPage from "./pages/ContactPage"; 
 import ProjectsPage from "./pages/ProjectPage";
 import { images, shuffleImages } from "./data/images";
+import SingleProjectPage from "./pages/SingleProjectPage";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -33,6 +34,9 @@ const App: React.FC = () => {
         <Route path="/contact" element={<ContactPage />} />
 
         <Route path="/projects" element={<ProjectsPage />} />
+
+        <Route path="/projects/:id" element={<SingleProjectPage />} />
+
       </Routes>
     </Router>
   );

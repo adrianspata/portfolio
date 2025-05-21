@@ -35,22 +35,24 @@ const ContactPage: React.FC = () => {
     <div className="contact-page">
       <Header />
 
-      <Link to="/" className="back-arrow">←</Link>
+      <Link to="/" className="back-arrow">
+          <i className="fa-solid fa-arrow-left"></i>
+        </Link>
 
       <div className="contact-content">
         <div className="contact-links">
           <a href="https://www.instagram.com/adrianspata" target="_blank" rel="noopener noreferrer">@adrianspata</a>
-          <span className="span">⎢</span>
+          <span className="span"></span>
           <a href="mailto:adrian.spata@hotmail.com">adrian.spata@hotmail.com</a>
-          <span className="span">⎢</span>
+          <span className="span"></span>
           <a href="https://www.linkedin.com/in/adrian-spata-5573901a0/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <span className="span">⎢</span>
+          <span className="span"></span>
           <a href="https://github.com/adrianspata" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
 
       <div className="local-time">
-        {location} ⎢ {time}
+        {location} <span></span> {time}
       </div>
     </div>
   );
