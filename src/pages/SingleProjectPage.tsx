@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";  // ✅ Lägg till Link här
+import React from "react";
+import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
 import { allProjects } from "../data/projects";
 import "../Styles/SingleProjectPage.css";
 
 const SingleProjectPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const project = allProjects.find((p) => p.id === Number(id));
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   if (!project) {
     return (
@@ -40,14 +40,14 @@ const SingleProjectPage: React.FC = () => {
         </div>
 
         <div className="project-images-grid">
-          {project.images.map((img, idx) => (
+          {project.images.map((idx) => (
             <div key={idx} className="image-item">
-              <img
+              {/* <img
                 src={img}
                 alt={`${project.name} ${idx + 1}`}
                 className="project-image"
                 onClick={() => setSelectedImage(img)}
-              />
+              /> */}
             </div>
           ))}
         </div>
