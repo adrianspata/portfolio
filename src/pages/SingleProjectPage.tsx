@@ -40,17 +40,17 @@ const SingleProjectPage: React.FC = () => {
         </div>
 
         <div className="project-images-grid">
-          {project.images.map((idx) => (
-            <div key={idx} className="image-item">
-              {/* <img
-                src={img}
-                alt={`${project.name} ${idx + 1}`}
-                className="project-image"
-                onClick={() => setSelectedImage(img)}
-              /> */}
-            </div>
-          ))}
-        </div>
+  {project.images.map((img, idx) => (
+    <div key={idx} className="image-item">
+      <img
+        src={img}
+        alt={`${project.name} ${idx + 1}`}
+        className="project-image"
+      />
+    </div>
+  ))}
+</div>
+
       </div>
     </div>
   );
