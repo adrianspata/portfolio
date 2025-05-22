@@ -7,7 +7,7 @@ interface CarouselProps {
   images: string[];
 }
 
-const FALLBACK_IMAGE = "/images/sotmagcoveropt4.jpg";
+const FALLBACK_IMAGE = "/images/sotmagcoveropt4.webp";
 
 const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
   const [index, setIndex] = useState(0);
@@ -36,7 +36,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
     if (isManualSelection || isDragging) return;
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 2000);
+    }, 1500);
     return () => clearInterval(interval);
   }, [isManualSelection, isDragging, images]);
 
