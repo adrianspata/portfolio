@@ -35,10 +35,6 @@ const ContactPage: React.FC = () => {
     <div className="contact-page">
       <Header />
 
-      <Link to="/" className="back-arrow">
-          <i className="fa-solid fa-arrow-left"></i>
-        </Link>
-
       <div className="contact-content">
         <div className="contact-links">
           <a href="https://www.instagram.com/adrianspata" target="_blank" rel="noopener noreferrer">@adrianspata</a>

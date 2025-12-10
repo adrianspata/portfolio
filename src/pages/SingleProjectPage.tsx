@@ -7,7 +7,7 @@ import "../Styles/SingleProjectPage.css";
 const SingleProjectPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   // const navigate = useNavigate();
-  const project = allProjects.find((p) => p.id === Number(id));
+  const project = allProjects.find((p) => p.id === id);
   // const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   if (!project) {
@@ -27,10 +27,6 @@ const SingleProjectPage: React.FC = () => {
   return (
     <div className="single-project-page">
       <Header />
-
-      <Link to="/projects" className="back-arrow">
-        <i className="fa-solid fa-arrow-left"></i>
-      </Link>
 
       <div className="project-content">
         <div className="project-info">

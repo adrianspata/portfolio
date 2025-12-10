@@ -3,16 +3,16 @@
 
 .description {
     position: absolute;
-    bottom: 80px;
-    right: 20px;
+    bottom: 40px;
+    right: 40px;
     width: 60vw;
-    color: #cc0000;
-    text-align: right;
-    z-index: 2;
     font-family: "Work Sans", sans-serif;
-    font-weight: 600;
-    font-style: normal;   
-    font-size: 15px; 
-    color: #cc0000;
+    font-style: normal; 
+    font-size: .8rem;
+    color: #000;
+    font-weight: 400;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+    text-align: right;
   }
   

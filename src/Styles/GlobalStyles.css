@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Pinyon+Script&family=Quicksand:wght@300..700&display=swap');
 
 .a, h2 {
-    font-family: "Outfit", serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
-    color: #cc0000;
+    color: #000;
     text-decoration: none;
     font-weight: normal;
 }

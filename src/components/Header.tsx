@@ -12,9 +12,11 @@ const Header: React.FC = () => {
 
   return (
     <header className="header">
-      <Link to={isProjectsPage ? "/" : "/projects"} className="plus-btn">
-        <i className={`fa-solid ${isProjectsPage ? "fa-minus" : "fa-plus"}`}></i>
-      </Link>
+      <div className="logo">
+        <Link to="/" className="logo-link">
+          <h2 className="h2">Adrian Spata</h2>
+        </Link>
+      </div>
     </header>
   );
 };
