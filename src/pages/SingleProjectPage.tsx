@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
+import Navigation from "../components/Navigation";
 import { allProjects } from "../data/projects";
 import "../Styles/SingleProjectPage.css";
 
@@ -14,6 +15,7 @@ const SingleProjectPage: React.FC = () => {
     return (
       <div className="single-project-page">
         <Header />
+        <Navigation isVisible={true} />
         <p className="error-message">
           COULD NOT BE FOUND.
         </p>
@@ -27,6 +29,7 @@ const SingleProjectPage: React.FC = () => {
   return (
     <div className="single-project-page">
       <Header />
+      <Navigation isVisible={true} />
 
       <div className="project-content">
         <div className="project-info">

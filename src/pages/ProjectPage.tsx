@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import Navigation from "../components/Navigation";
 import "../Styles/GlobalStyles.css";
 import "../Styles/ProjectPage.css";
 
@@ -11,6 +12,7 @@ const ProjectsPage: React.FC = () => {
   return (
     <div className="projects-page">
       <Header />
+      <Navigation isVisible={true} />
       <Link to="/" className="back-arrow">
         <i className="fa-solid fa-arrow-left"></i>
       </Link>

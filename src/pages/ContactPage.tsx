@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header"; 
+import Navigation from "../components/Navigation";
 import "../Styles/GlobalStyles.css"; 
 import "../Styles/ContactPage.css"; 
 
@@ -33,6 +34,7 @@ const ContactPage: React.FC = () => {
   return (
     <div className="contact-page">
       <Header />
+      <Navigation isVisible={true} />
 
       <div className="contact-content">
         <div className="contact-links">
