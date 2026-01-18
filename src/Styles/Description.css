@@ -2,9 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 .description {
-    position: absolute;
-    bottom: 40px;
-    right: 40px;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
     width: 60vw;
     font-family: "Work Sans", sans-serif;
     font-style: normal; 
@@ -14,5 +14,6 @@
     transition: all 0.3s ease-in-out;
     text-transform: uppercase;
     text-align: right;
+    pointer-events: none;
   }
   

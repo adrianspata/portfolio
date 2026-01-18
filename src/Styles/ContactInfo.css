@@ -21,6 +21,7 @@
   .contact-info a:hover {
     letter-spacing: 0.07em;
     color:#000;
+    font-weight: 500;
   }
 
   .contact-link {

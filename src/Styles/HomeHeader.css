@@ -1,0 +1,33 @@
+.home-header {
+  position: fixed;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99;
+  background: transparent;
+  will-change: transform, opacity;
+}
+
+.home-logo {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #000;
+  margin: 0;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.home-logo:hover {
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .home-logo {
+    font-size: 11px;
+  }
+}
