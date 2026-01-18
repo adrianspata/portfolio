@@ -22,4 +22,16 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-jpg&png
+*.tsbuildinfo
+# Coverage reports
+coverage/
+
+# Environment files
+*.env*
+
+# OS generated files
+Thumbs.db
+
+# Image ignore example (ta bort om du vill ha bilder i repo)
+# *.jpg
+# *.png
