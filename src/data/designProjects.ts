@@ -40,10 +40,10 @@ const designProjects = [
   {
     id: "louis-wood",
     images: [
+      "/images/louisSmell4.webp",
+      "/images/louis3sticksb&w.webp",
       "/images/louiseBW6.webp",
       "/images/louisexx4.webp",
-      "/images/louis3sticksb&w.webp",
-      "/images/louisSmell4.webp",
     ],
     name: "Louis Wood for SOT",
     date: "Juli 2024",
