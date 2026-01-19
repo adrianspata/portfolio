@@ -1,5 +1,15 @@
-/* IntroAnimation.css */
-
+.intro-logo {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 80px;
+  z-index: 10;
+  color: #000;
+}
 .intro-animation {
   position: fixed;
   inset: 0;
@@ -16,7 +26,6 @@
   transform: translate(-50%, -50%);
 }
 
-/* Flash-bilden (byter snabbt) */
 .flash-frame {
   position: absolute;
   inset: 0;
@@ -26,7 +35,6 @@
   z-index: 5;
 }
 
-/* Stackade bilder – ALLA EXAKT SAMMA PLATS */
 .stack-card {
   position: absolute;
   inset: 0;

@@ -86,7 +86,7 @@ const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete }) => {
   animate={{ opacity: 1 }}
   transition={{ duration: 0.35, ease: "easeOut" }}
 >
-  <h1>Adrian Spata</h1>
+  <h1>ADRIAN SPATA</h1>
 </motion.div>
 
           <div className="intro-stage">
