@@ -13,9 +13,6 @@ const ProjectsPage: React.FC = () => {
     <div className="projects-page">
       <Header />
       <Navigation isVisible={true} />
-      <Link to="/" className="back-arrow">
-        <i className="fa-solid fa-arrow-left"></i>
-      </Link>
 
       <h2 className="projects-title">Code Work</h2>
       <div className="projects-grid">
