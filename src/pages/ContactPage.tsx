@@ -34,7 +34,7 @@ const ContactPage: React.FC = () => {
   return (
     <div className="contact-page">
       <Header />
-      <Navigation isVisible={true} />
+      <Navigation isVisible={true} showLogo={true} />
 
       <div className="contact-content">
         <div className="contact-links">

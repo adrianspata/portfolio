@@ -12,7 +12,7 @@ const ProjectsPage: React.FC = () => {
   return (
     <div className="projects-page">
       <Header />
-      <Navigation isVisible={true} />
+      <Navigation isVisible={true} showLogo={true} />
 
       <h2 className="projects-title">Code Work</h2>
       <div className="projects-grid">

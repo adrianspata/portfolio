@@ -15,7 +15,7 @@ const SingleProjectPage: React.FC = () => {
     return (
       <div className="single-project-page">
         <Header />
-        <Navigation isVisible={true} />
+        <Navigation isVisible={true} showLogo={true} />
         <p className="error-message">
           COULD NOT BE FOUND.
         </p>
@@ -29,7 +29,7 @@ const SingleProjectPage: React.FC = () => {
   return (
     <div className="single-project-page">
       <Header />
-      <Navigation isVisible={true} />
+      <Navigation isVisible={true} showLogo={true} />
 
       <div className="project-content">
         <div className="project-info">
