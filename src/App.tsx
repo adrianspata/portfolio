@@ -6,6 +6,7 @@ import WorkStrip from "./components/WorkStrip";
 import Description from "./components/Description";
 import ContactPage from "./pages/ContactPage"; 
 import SingleProjectPage from "./pages/SingleProjectPage";
+import ProjectsPage from "./pages/ProjectPage";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -31,7 +32,7 @@ const App: React.FC = () => {
 
         <Route path="/contact" element={<ContactPage />} />
 
-        <Route path="/projects" element={<ContactPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
 
         <Route path="/projects/:id" element={<SingleProjectPage />} />
 
