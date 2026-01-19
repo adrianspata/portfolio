@@ -6,9 +6,9 @@ const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/" className="logo-link">
+        {/* <Link to="/" className="logo-link">
           <h2 className="h2">Adrian Spata</h2>
-        </Link>
+        </Link> */}
       </div>
     </header>
   );
