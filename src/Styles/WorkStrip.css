@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  min-height: 450px;
+  min-height: 500px;
   overflow-x: hidden;
   box-sizing: border-box;
 }
@@ -39,7 +39,7 @@
   overflow: visible;
   border-radius: 2px;
   will-change: transform;
-  width: 120px;
+  width: 160px;
   height: auto;
 }
 
@@ -60,7 +60,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: flex-end;
   padding: 12px;

@@ -1,18 +1,5 @@
 const designProjects = [
   {
-    id: "the-hand-over",
-    images: [
-      "/images/sot_scan4.5x7.webp",
-      "/images/SOT__2.webp",
-      "/images/SOT__7.webp",
-      "/images/sot_scan2.webp",
-      "/images/sot_scan5.5x7.webp",
-    ],
-    name: "The Hand Over",
-    date: "May 2025",
-    description: "Concept, creative direction, post-production.",
-  },
-  {
     id: "incense-collection",
     images: [
       "/images/agrumeappelbild.webp",
@@ -36,35 +23,6 @@ const designProjects = [
     date: "Aug 2024",
     description:
       "Magazine layout, visual storytelling & creative direction.",
-  },
-  {
-    id: "louis-wood",
-    images: [
-      "/images/louisSmell4.webp",
-      "/images/louis3sticksb&w.webp",
-      "/images/louiseBW6.webp",
-      "/images/louisexx4.webp",
-    ],
-    name: "Louis Wood for SOT",
-    date: "Juli 2024",
-    description:
-      "Art direction, concept development, visual post-production.",
-  },
-  {
-    id: "your-order-has-been-shipped",
-    images: [
-      "/images/IMG_0442.webp",
-      "/images/sotBagSteps2.webp",
-      "/images/IMG_0492.webp",
-      "/images/IMG_0533.webp",
-      "/images/sotBagLegs.webp",
-      "/images/sotStepsN.webp",
-      "/images/IMG_0545.webp",
-      "/images/IMG_0614.webp"
-    ],
-    name: "Your order has been shipped",
-    date: "Juli 2024",
-    description: "Creative direction, design & visual post-production.",
   },
   {
     id: "launch-event",

@@ -14,7 +14,7 @@ const ProjectsPage: React.FC = () => {
       <Header />
       <Navigation isVisible={true} showLogo={true} />
 
-      <h2 className="projects-title">Code Work</h2>
+      <h2 className="projects-title">Development</h2>
       <div className="projects-grid">
         {codeProjects.map((project) => (
           <Link to={`/projects/${project.id}`} key={project.id} className="project-card">
@@ -24,7 +24,7 @@ const ProjectsPage: React.FC = () => {
         ))}
       </div>
 
-      <h2 className="projects-title">Design Work</h2>
+      <h2 className="projects-title">Design</h2>
       <div className="projects-grid">
         {designProjects.map((project) => (
           <Link to={`/projects/${project.id}`} key={project.id} className="project-card">
