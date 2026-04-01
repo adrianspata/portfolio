@@ -1,23 +1,38 @@
 const codeProjects = [
   {
+    id: "plygrnd",
+    images: [
+      "/images/plygrndDeskUpFront.webp",
+      "/images/plygrnd17UpMobile.webp",
+      "/images/plygrnd.screen0.webp",
+      "/images/plygrnd.screen100.webp",
+      "/images/plygrndMobile.webp"
+    ],
+    name: "Plygrnd",
+    date: "Feb 2026",
+    description: "Web design and development.",
+  },
+  {
     id: "sot-webshop",
     images: [
+      "/images/sotDeskUp.webp",
+      "/images/sotUpMobileMid.webp",
       "/images/sotWeb02.webp",
-      "/images/sotWebNew.webp",
-      "/images/sotWebNewProject.webp",
-      "/images/sotWebpage.webp"
+      "/images/SOTwebClip.mp4",
+      "/images/sot17MobileUp.webp"
     ],
-    name: "SOT Webshop",
+    name: "SOT Stockholm",
     date: "Feb 2024",
-    description: "Website development & design.",
+    description: "Web design and development.",
   },
   {
     id: "looplib",
     images: [
-      "/images/loopLibHome.webp",
+      "/images/looblipDeskUpfront.webp",
+      "/images/loopLibScreen.webp",
       "/images/loopLibShop.webp",
-      "/images/looplibMobile.webp", 
-      "/images/looplibDesktop.webp"
+      "/images/loopLibUpMobileMid.webp",
+      "/images/loopLibLightScreen.webp"
     ],
     name: "LoopLib",
     date: "October 2023",
@@ -28,8 +43,8 @@ const codeProjects = [
     id: "socker-sucker",
     images: [
       "/images/sockerSuckerWebpage1.webp",
-      "/images/sockerSuckerWebpage.webp",
       "/images/sockerSucker2Mobile.webp",
+      "/images/sockerSuckerWebpage.webp",
     ],
     name: "Socker Sucker",
     date: "October 2022",
