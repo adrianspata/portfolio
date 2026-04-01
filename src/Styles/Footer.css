@@ -1,0 +1,42 @@
+.site-footer {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 5vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  z-index: 90;
+  pointer-events: none;
+}
+
+.site-footer span {
+  font-family: 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-color);
+  opacity: 0.4;
+  letter-spacing: 0.05em;
+  pointer-events: auto;
+}
+
+.footer-copy {
+  margin-left: auto;
+}
+
+.footer-time {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 0 1.5rem;
+  }
+
+  .footer-time {
+    display: block;
+    font-variant-numeric: tabular-nums;
+  }
+}
