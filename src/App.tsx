@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import IntroAnimation from "./components/IntroAnimation";
 import Navigation from "./components/Navigation";
 import WorkStrip from "./components/WorkStrip";
-import Description from "./components/Description";
 import ContactPage from "./pages/ContactPage"; 
 import SingleProjectPage from "./pages/SingleProjectPage";
 import ProjectsPage from "./pages/ProjectPage";
+import Footer from "./components/Footer";
 import "./App.css";
 
 const App: React.FC = () => {
@@ -22,21 +22,21 @@ const App: React.FC = () => {
             )}
             {introComplete && (
               <>
-                <Navigation isVisible={introComplete} showLogo={true} />
+                <Navigation isVisible={introComplete} />
                 <WorkStrip isVisible={introComplete} />
-                <Description />
               </>
             )}
           </div>
         } />
 
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<ContactPage />} />
 
-        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/work" element={<ProjectsPage />} />
 
-        <Route path="/projects/:id" element={<SingleProjectPage />} />
+        <Route path="/work/:id" element={<SingleProjectPage />} />
 
       </Routes>
+      <Footer />
     </Router>
   );
 };
