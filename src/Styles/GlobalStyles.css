@@ -1,9 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Pinyon+Script&family=Quicksand:wght@300..700&display=swap');
-
 .a, h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 18px;
-    color: #000;
+    color: var(--text-color);
     text-decoration: none;
     font-weight: normal;
 }
@@ -13,12 +11,11 @@
     top: 65px;
     left: 30px;
     font-size: 20px;
-    color: #cc0000;
+    color: var(--text-color);
     text-decoration: none;
     font-weight: normal;
-  }
+}
   
-  .back-arrow:hover {
+.back-arrow:hover {
     opacity: 0.8;
-  }
-  
+}
