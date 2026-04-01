@@ -68,7 +68,7 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
 
   const handleImageClick = () => {
     if (!isDragging) {
-      navigate("/projects"); // 👈 Navigera till projekt
+      navigate("/work"); // 👈 Navigera till projekt
     }
   };
 
@@ -81,13 +81,25 @@ const Carousel: React.FC<CarouselProps> = ({ selectedImage, images }) => {
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      <img
-        src={images[index]}
-        alt="carousel"
-        className="carousel-image"
-        onError={handleImageError}
-        onClick={handleImageClick} // 👈 Lägg till klick
-      />
+      {images[index].toLowerCase().endsWith('.mp4') || images[index].toLowerCase().endsWith('.webm') ? (
+        <video
+          src={images[index]}
+          className="carousel-image"
+          autoPlay
+          loop
+          muted
+          playsInline
+          onClick={handleImageClick}
+        />
+      ) : (
+        <img
+          src={images[index]}
+          alt="carousel"
+          className="carousel-image"
+          onError={handleImageError}
+          onClick={handleImageClick} // 👈 Lägg till klick
+        />
+      )}
     </div>
   );
 };
