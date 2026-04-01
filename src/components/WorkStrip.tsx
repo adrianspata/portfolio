@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useAnimationFrame } from "framer-motion";
 import designProjects from "../data/designProjects";
 import codeProjects from "../data/codeProjects";
 import "../Styles/WorkStrip.css";
@@ -10,68 +10,123 @@ interface WorkStripProps {
 }
 
 const WorkStrip: React.FC<WorkStripProps> = ({ isVisible }) => {
-  const allProjects = [...designProjects, ...codeProjects];
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [allProjects] = useState(() => 
+    [...designProjects, ...codeProjects].sort(() => Math.random() - 0.5)
+  );
+  const stripRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const handleProjectClick = (projectId: string) => {
-    navigate(`/projects/${projectId}`);
-  };
+  const [isPaused, setIsPaused] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const resumeTimeout = useRef<number | null>(null);
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLDivElement>,
-    projectId: string
-  ) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleProjectClick(projectId);
+  const [cursor, setCursor] = useState({ show: false, text: "", x: 0, y: 0 });
+
+  useAnimationFrame((_, delta) => {
+    if (!stripRef.current || isPaused || isMouseDown) return;
+    
+    // Smooth slow pan (0.3px per frame approx)
+    stripRef.current.scrollLeft += 0.3 * (delta / 16.6);
+
+    // Seamless absolute wrap
+    if (stripRef.current.scrollLeft >= stripRef.current.scrollWidth / 2) {
+      stripRef.current.scrollLeft -= stripRef.current.scrollWidth / 2;
     }
+  });
+
+  const handleWheel = () => {
+    setIsPaused(true);
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+    resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!stripRef.current) return;
+    setIsMouseDown(true);
+    setIsPaused(true);
+    setStartX(e.pageX - stripRef.current.offsetLeft);
+    setScrollLeft(stripRef.current.scrollLeft);
+  };
+
+  const handleMouseLeaveContainer = () => {
+    setIsMouseDown(false);
+    setIsPaused(false);
+    setCursor(prev => ({ ...prev, show: false }));
+  };
+
+  const handleMouseUp = () => {
+    setIsMouseDown(false);
+    if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
+    resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setCursor(prev => ({ ...prev, x: e.clientX, y: e.clientY }));
+
+    if (!isMouseDown || !stripRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - stripRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    stripRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  if (!isVisible) return null;
 
   return (
-    <motion.div
-      className="work-strip-container"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.6, delay: 0.2 }}
+    <motion.div 
+      className="home-container" 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+      onWheel={handleWheel}
+      onMouseDown={handleMouseDown}
+      onMouseLeave={handleMouseLeaveContainer}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
     >
-      <div className="work-strip" ref={scrollContainerRef}>
-        {allProjects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            className="work-thumbnail-wrapper"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: isVisible ? 0.3 + index * 0.03 : 0 }}
-            onMouseEnter={() => setHoveredId(project.id)}
-            onMouseLeave={() => setHoveredId(null)}
-            onClick={() => handleProjectClick(project.id)}
-            onKeyDown={(e) => handleKeyDown(e, project.id)}
-            role="button"
-            tabIndex={0}
-            aria-label={`View ${project.name} project`}
+      <div className="bg-filmstrip" ref={stripRef}>
+        {allProjects.map((p, i) => (
+          <div 
+            key={p.id + "_col1_" + i} 
+            className="bg-thumb"
+            onMouseEnter={() => setCursor(prev => ({ ...prev, show: true, text: p.name }))}
+            onMouseLeave={() => setCursor(prev => ({ ...prev, show: false }))}
+            onClick={(e) => {
+              if (stripRef.current && Math.abs((e.pageX - stripRef.current.offsetLeft) - startX) < 5) {
+                navigate(`/work/${p.id}`);
+              }
+            }}
           >
-            <motion.div
-              className="work-thumbnail"
-              whileHover={{ scale: 1.04 }}
-              transition={{ duration: 0.3 }}
-            >
-              <img src={project.images[0]} alt={project.name} />
-              {hoveredId === project.id && (
-                <motion.div
-                  className="thumbnail-overlay"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <p className="thumbnail-label">{project.name}</p>
-                </motion.div>
-              )}
-            </motion.div>
-          </motion.div>
+            <img src={p.images[0]} alt={p.name} />
+          </div>
+        ))}
+        {allProjects.map((p, i) => (
+          <div 
+            key={p.id + "_col2_" + i} 
+            className="bg-thumb"
+            onMouseEnter={() => setCursor(prev => ({ ...prev, show: true, text: p.name }))}
+            onMouseLeave={() => setCursor(prev => ({ ...prev, show: false }))}
+            onClick={(e) => {
+              if (stripRef.current && Math.abs((e.pageX - stripRef.current.offsetLeft) - startX) < 5) {
+                navigate(`/work/${p.id}`);
+              }
+            }}
+          >
+            <img src={p.images[0]} alt={p.name} />
+          </div>
         ))}
       </div>
+
+      {cursor.show && (
+        <div 
+          className="cursor-tooltip"
+          style={{ left: cursor.x, top: cursor.y }}
+        >
+          {cursor.text}
+        </div>
+      )}
     </motion.div>
   );
 };

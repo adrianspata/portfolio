@@ -2,16 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
 
 .single-project-page {
-    background-color: white;
-    width: 100vw;
-    min-height: 100vh; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow-x: hidden;
-    padding-top: 30px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow-x: hidden;
+  padding: 90px 2rem 40px;
+  /* Mindre avstånd till headern */
+  box-sizing: border-box;
 }
 
 .error-message {
@@ -28,71 +31,83 @@
 
 .back-arrow {
   font-size: 0.8rem;
-  color: #000000;
+  color: var(--text-color);
   font-weight: lighter;
-  position: fixed;
-  top: 30px;
-  left: 30px;
+  position: absolute;
+  top: 80px;
+  left: 3rem;
   z-index: 100;
   text-decoration: none;
 }
 
 .project-content {
-  /* ta bort flex — vi låter kolumnerna sköta layouten */
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 1rem; /* Detta tvingar ett exakt och orubbligt gap på 1rem fram till bilderna */
 }
 
 .project-info {
-  max-width: 30vw;
-  margin-left: 30px;
-  margin-right: auto;
-  margin-top: 60px;
-  margin-bottom: 30px;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
+  margin: 0; /* Marginal hanteras nu säkert av parent container */
 }
 
-.project-name, h2 {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 500;
-    font-size: 14px;
-    color: #000000;
-    letter-spacing: 0.03em;       
-    word-spacing: 0.05em;
-  }
+.project-name,
+h2 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-color);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
+  margin: 0;
+  /* Marginaler styrs nu helt av flex-gap */
+}
 
 .project-date {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    font-size: 9px;
-    color: #000000;
-    letter-spacing: 0.03em;       
-    word-spacing: 0.05em;
-  }
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  color: var(--text-color);
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
+  margin: 0;
+}
+
 .project-description {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    font-size: 9px;
-    color: #000000;
-    text-align: justify;           
-    line-height: 1.5;              
-    letter-spacing: 0.03em;       
-    word-spacing: 0.05em;
-  }
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  color: var(--text-color);
+  text-align: justify;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  word-spacing: 0.05em;
+  margin: 0;
+}
 
 .project-images-grid {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 30px;
-  margin-right: 30px;
-  margin-bottom: 60px;
+  margin: 0 0 60px 0;
   gap: 30px;
-/* wrappern behåller vi */
-.image-item {
-  display: block;
   width: 100%;
-  max-width: 600px;
-  margin-bottom: 0;
-} -moz-column-break-inside: avoid;
+
+  /* wrappern behåller vi */
+  .image-item {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 0;
+  }
+
+  -moz-column-break-inside: avoid;
   break-inside: avoid-column;
 }
 
@@ -107,9 +122,19 @@
 }
 
 /* Responsivt: vid smalare skärmar - en kolumn */
+@media (max-width: 768px) {
+  .single-project-page {
+    padding: 100px 1.5rem 40px;
+  }
+
+  .back-arrow {
+    left: 1.5rem;
+  }
+}
+
 @media (max-width: 600px) {
   .project-images-grid {
-    column-width: 100vw;  
+    column-width: 100vw;
     column-gap: 0;
   }
 }

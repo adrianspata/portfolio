@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
@@ -11,17 +11,22 @@ const SingleProjectPage: React.FC = () => {
   const project = allProjects.find((p) => p.id === id);
   // const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  // Scrolla högst upp varje gång man går in på ett projekt
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   if (!project) {
     return (
       <div className="single-project-page">
         <Header />
-        <Navigation isVisible={true} showLogo={true} />
+        <Navigation isVisible={true} />
         <p className="error-message">
           COULD NOT BE FOUND.
         </p>
         <Link to="/" className="back-arrow">
-                <i className="fa-solid fa-arrow-left"></i>
-              </Link>
+          <i className="fa-solid fa-arrow-left"></i>
+        </Link>
       </div>
     );
   }
@@ -29,7 +34,7 @@ const SingleProjectPage: React.FC = () => {
   return (
     <div className="single-project-page">
       <Header />
-      <Navigation isVisible={true} showLogo={true} />
+      <Navigation isVisible={true} />
 
       <div className="project-content">
         <div className="project-info">
@@ -39,16 +44,31 @@ const SingleProjectPage: React.FC = () => {
         </div>
 
         <div className="project-images-grid">
-  {project.images.map((img, idx) => (
-    <div key={idx} className="image-item">
-      <img
-        src={img}
-        alt={`${project.name} ${idx + 1}`}
-        className="project-image"
-      />
-    </div>
-  ))}
-</div>
+          {project.images.map((mediaUrl, idx) => {
+            const isVideo = mediaUrl.toLowerCase().endsWith('.mp4') || mediaUrl.toLowerCase().endsWith('.webm');
+            
+            return (
+              <div key={idx} className="image-item">
+                {isVideo ? (
+                  <video
+                    src={mediaUrl}
+                    className="project-image"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <img
+                    src={mediaUrl}
+                    alt={`${project.name} ${idx + 1}`}
+                    className="project-image"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
 
       </div>
     </div>
