@@ -152,8 +152,6 @@ const WorkStrip: React.FC<WorkStripProps> = ({ isVisible }) => {
 
   if (!isVisible) return null;
 
-  const totalThumbs = allProjects.length * 2;
-
   return (
     <motion.div
       className="home-container"
