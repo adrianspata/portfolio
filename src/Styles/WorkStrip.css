@@ -32,6 +32,8 @@
   cursor: crosshair;
   /* Let JS handle all touch scrolling so autoscroll works on mobile */
   touch-action: pan-y;
+  scroll-behavior: auto !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 .home-container.intro-active .bg-filmstrip {
@@ -67,6 +69,7 @@
   transform-style: preserve-3d;
   backface-visibility: visible;
   will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 .bg-thumb img {
