@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/Footer.css";
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  isVisible?: boolean;
+}
+
+const Footer: React.FC<FooterProps> = ({ isVisible = true }) => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -16,7 +20,13 @@ const Footer: React.FC = () => {
   });
 
   return (
-    <footer className="site-footer">
+    <footer
+      className="site-footer"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transition: "opacity 0.6s ease"
+      }}
+    >
       <span className="footer-time">{formattedTime}</span>
       <span className="footer-copy">© 2026 ADRIAN SPATA</span>
     </footer>
