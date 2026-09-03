@@ -144,51 +144,125 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
   // Center-item highlight: card in center of screen is in color (grayscale 0%), others are black & white (grayscale 100%)
   const [centerIndex, setCenterIndex] = useState<number | null>(null);
+  const currentCenterIndexRef = useRef<number | null>(null);
   const [cursor, setCursor] = useState({ show: false, text: "", x: 0, y: 0 });
-
-  // Find which thumb is closest to the center of the strip container
-  const updateCenterIndex = useCallback(() => {
-    if (!stripRef.current) return;
-    const containerRect = stripRef.current.getBoundingClientRect();
-    const containerCenterX = containerRect.left + containerRect.width / 2;
-
-    let closestIdx: number | null = null;
-    let closestDist = Infinity;
-
-    thumbRefs.current.forEach((el, idx) => {
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const thumbCenterX = rect.left + rect.width / 2;
-      const dist = Math.abs(thumbCenterX - containerCenterX);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestIdx = idx;
-      }
-    });
-
-    setCenterIndex((prev) => (prev !== closestIdx ? closestIdx : prev));
-  }, []);
 
   // Persistent float scroll offset to prevent browser subpixel scroll truncation
   const scrollPosRef = useRef(0);
 
-  // Native smooth autoscroll pan at original speed (0.3px per frame) in a continuous loop
+  // Cached layout metrics to prevent layout thrashing (forced reflows) during animation frames
+  const singleSetWidthRef = useRef<number>(0);
+  const cardCentersRef = useRef<number[]>([]);
+  const containerWidthRef = useRef<number>(0);
+
+  const measureMetrics = useCallback(() => {
+    if (!stripRef.current || !thumbRefs.current[0] || !thumbRefs.current[projectCount]) return;
+
+    containerWidthRef.current = stripRef.current.clientWidth;
+    const firstOffset = thumbRefs.current[0].offsetLeft;
+    const secondSetOffset = thumbRefs.current[projectCount].offsetLeft;
+    const setWidth = secondSetOffset - firstOffset;
+    if (setWidth > 0) {
+      singleSetWidthRef.current = setWidth;
+    }
+
+    const centers: number[] = [];
+    for (let i = 0; i < thumbRefs.current.length; i++) {
+      const el = thumbRefs.current[i];
+      if (el) {
+        centers.push(el.offsetLeft + el.offsetWidth / 2);
+      } else {
+        centers.push(0);
+      }
+    }
+    cardCentersRef.current = centers;
+  }, [projectCount]);
+
+  // Find which thumb is closest to the center of the strip container without layout thrashing
+  const updateCenterIndex = useCallback(() => {
+    if (!stripRef.current) return;
+    const containerWidth = containerWidthRef.current || stripRef.current.clientWidth;
+    const currentScrollCenter = (scrollPosRef.current || stripRef.current.scrollLeft) + containerWidth / 2;
+
+    const centers = cardCentersRef.current;
+    if (centers.length === 0) {
+      measureMetrics();
+      return;
+    }
+
+    let closestIdx = 0;
+    let closestDist = Infinity;
+    for (let i = 0; i < centers.length; i++) {
+      const dist = Math.abs(centers[i] - currentScrollCenter);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestIdx = i;
+      }
+    }
+
+    if (currentCenterIndexRef.current !== closestIdx) {
+      currentCenterIndexRef.current = closestIdx;
+      setCenterIndex(closestIdx);
+    }
+  }, [measureMetrics]);
+
+  // Native ultra-smooth autoscroll pan at constant velocity in a seamless infinite loop
   useAnimationFrame((_, delta) => {
     if (!isAutoscrollActive || !stripRef.current || isPaused || isMouseDown) return;
 
-    // Original carousel rolling speed: 0.3px per 16.6ms frame
-    const normalSpeed = 0.3;
-    scrollPosRef.current += normalSpeed * (delta / 16.6);
+    const singleSetWidth = singleSetWidthRef.current;
+    if (singleSetWidth <= 0) {
+      measureMetrics();
+      return;
+    }
 
-    // Seamless infinite wrap
-    const halfWidth = stripRef.current.scrollWidth / 2;
-    if (halfWidth > 0 && scrollPosRef.current >= halfWidth) {
-      scrollPosRef.current -= halfWidth;
+    // Smooth continuous rolling speed (~0.35px per 16.6ms frame)
+    const normalSpeed = 0.35;
+    const clampedDelta = Math.min(delta, 100);
+    scrollPosRef.current += normalSpeed * (clampedDelta / 16.667);
+
+    // Seamless zero-jump modulo wrap
+    if (scrollPosRef.current >= singleSetWidth) {
+      scrollPosRef.current -= singleSetWidth;
+    } else if (scrollPosRef.current < 0) {
+      scrollPosRef.current += singleSetWidth;
     }
 
     stripRef.current.scrollLeft = scrollPosRef.current;
-    updateCenterIndex();
+
+    // Fast zero-reflow center calculation
+    const containerWidth = containerWidthRef.current || stripRef.current.clientWidth;
+    const currentScrollCenter = scrollPosRef.current + containerWidth / 2;
+
+    const centers = cardCentersRef.current;
+    if (centers.length > 0) {
+      let closestIdx = 0;
+      let closestDist = Infinity;
+      for (let i = 0; i < centers.length; i++) {
+        const dist = Math.abs(centers[i] - currentScrollCenter);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIdx = i;
+        }
+      }
+
+      if (currentCenterIndexRef.current !== closestIdx) {
+        currentCenterIndexRef.current = closestIdx;
+        setCenterIndex(closestIdx);
+      }
+    }
   });
+
+  // Re-measure on resize and window events
+  useEffect(() => {
+    measureMetrics();
+    const handleResize = () => {
+      measureMetrics();
+      updateCenterIndex();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [measureMetrics, updateCenterIndex]);
 
   // Center update on manual scroll
   useEffect(() => {
@@ -244,7 +318,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       }
 
       // Ensure duplicate cards remain completely hidden from the start
-      for (let i = projectCount; i < projectCount * 2; i++) {
+      for (let i = projectCount; i < thumbRefs.current.length; i++) {
         const dupEl = thumbRefs.current[i];
         if (dupEl) {
           dupEl.style.visibility = "hidden";
@@ -598,7 +672,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
               el.style.opacity = "";
             }
           }
-          for (let i = projectCount; i < projectCount * 2; i++) {
+          for (let i = projectCount; i < thumbRefs.current.length; i++) {
             const dupEl = thumbRefs.current[i];
             if (dupEl) {
               dupEl.style.visibility = "visible";
@@ -606,13 +680,16 @@ const WorkStrip: React.FC<WorkStripProps> = ({
             }
           }
 
-          // 4. Enable pointer, drag, and touch interactions
+          // 4. Measure accurate metrics across all filmstrip sets
+          measureMetrics();
+
+          // 5. Enable pointer, drag, and touch interactions
           setIsInteractive(true);
 
-          // 5. Update center index immediately so middle image is color (grayscale 0%) and others are black/white
+          // 6. Update center index immediately
           updateCenterIndex();
 
-          // 6. Start carousel autoscroll rolling immediately in an infinite loop
+          // 7. Start carousel autoscroll rolling immediately in an infinite seamless loop
           scrollPosRef.current = stripRef.current ? stripRef.current.scrollLeft : 0;
           setIsAutoscrollActive(true);
           onIntroCompleteRef.current?.();
@@ -648,14 +725,24 @@ const WorkStrip: React.FC<WorkStripProps> = ({
         cancelThisRun();
       }
     };
-  }, [isIntroActive, projectCount, projects]);
+  }, [isIntroActive, measureMetrics, projectCount, projects, updateCenterIndex]);
 
   // ── Mouse handlers ──────────────────────────────────────────────────────────
 
   const handleWheel = () => {
     if (!isInteractive) return;
     setIsPaused(true);
-    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
+    if (stripRef.current) {
+      let pos = stripRef.current.scrollLeft;
+      const singleSetWidth = singleSetWidthRef.current;
+      if (singleSetWidth > 0) {
+        while (pos >= singleSetWidth) pos -= singleSetWidth;
+        while (pos < 0) pos += singleSetWidth;
+        stripRef.current.scrollLeft = pos;
+      }
+      scrollPosRef.current = pos;
+      updateCenterIndex();
+    }
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -664,7 +751,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     if (!isInteractive || !stripRef.current) return;
     setIsMouseDown(true);
     setIsPaused(true);
-    setStartX(e.pageX - stripRef.current.offsetLeft);
+    setStartX(e.pageX);
     setScrollLeft(stripRef.current.scrollLeft);
     scrollPosRef.current = stripRef.current.scrollLeft;
   };
@@ -689,10 +776,16 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     setCursor((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
     if (!isMouseDown || !stripRef.current) return;
     e.preventDefault();
-    const x = e.pageX - stripRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    stripRef.current.scrollLeft = scrollLeft - walk;
-    scrollPosRef.current = stripRef.current.scrollLeft;
+    const walk = (startX - e.pageX) * 1.5;
+    let newPos = scrollLeft + walk;
+    const singleSetWidth = singleSetWidthRef.current;
+    if (singleSetWidth > 0) {
+      while (newPos >= singleSetWidth) newPos -= singleSetWidth;
+      while (newPos < 0) newPos += singleSetWidth;
+    }
+    stripRef.current.scrollLeft = newPos;
+    scrollPosRef.current = newPos;
+    updateCenterIndex();
   };
 
   // ── Touch handlers ──────────────────────────────────────────────────────────
@@ -711,24 +804,30 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     if (!isInteractive || !isTouchDragging.current || !stripRef.current) return;
     const x = e.touches[0].pageX;
     const walk = (touchStartX.current - x) * 1.5;
-    stripRef.current.scrollLeft = touchScrollLeft.current + walk;
+    let newPos = touchScrollLeft.current + walk;
+    const singleSetWidth = singleSetWidthRef.current;
 
     // Seamless wrap during touch drag
-    if (stripRef.current.scrollLeft >= stripRef.current.scrollWidth / 2) {
-      stripRef.current.scrollLeft -= stripRef.current.scrollWidth / 2;
-      touchScrollLeft.current -= stripRef.current.scrollWidth / 2;
-    } else if (stripRef.current.scrollLeft < 0) {
-      stripRef.current.scrollLeft += stripRef.current.scrollWidth / 2;
-      touchScrollLeft.current += stripRef.current.scrollWidth / 2;
+    if (singleSetWidth > 0) {
+      while (newPos >= singleSetWidth) {
+        newPos -= singleSetWidth;
+        touchScrollLeft.current -= singleSetWidth;
+      }
+      while (newPos < 0) {
+        newPos += singleSetWidth;
+        touchScrollLeft.current += singleSetWidth;
+      }
     }
 
-    scrollPosRef.current = stripRef.current.scrollLeft;
+    stripRef.current.scrollLeft = newPos;
+    scrollPosRef.current = newPos;
     updateCenterIndex();
   };
 
   const handleTouchEnd = () => {
     if (!isInteractive) return;
     isTouchDragging.current = false;
+    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -749,10 +848,10 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       onTouchEnd={handleTouchEnd}
     >
       <div className="bg-filmstrip" ref={stripRef}>
-        {[0, 1].flatMap((setIdx) =>
+        {[0, 1, 2].flatMap((setIdx) =>
           projects.map((p, i) => {
             const globalIdx = setIdx * projectCount + i;
-            const isDuplicate = setIdx === 1;
+            const isDuplicate = setIdx > 0;
             const isCenter = centerIndex === globalIdx;
 
             return (
@@ -784,6 +883,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
                   src={getMediaUrl(p.images[0])}
                   alt={p.name}
                   draggable={false}
+                  onLoad={measureMetrics}
                 />
               </div>
             );
