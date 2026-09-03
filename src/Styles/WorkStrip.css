@@ -17,30 +17,44 @@
 }
 
 .bg-filmstrip {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.bg-filmstrip-track {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
-  width: 100%;
   height: max-content;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  scrollbar-width: none;
-  /* Firefox */
+  width: max-content;
   padding: 0 3rem;
-  cursor: crosshair;
-  /* Let JS handle all touch scrolling so autoscroll works on mobile */
-  touch-action: pan-y;
-  scroll-behavior: auto !important;
-  -webkit-overflow-scrolling: touch;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .home-container.intro-active .bg-filmstrip {
   overflow: visible;
+}
+
+.home-container.intro-active .bg-filmstrip-track {
+  transform: translate3d(0, 0, 0) !important;
+  -webkit-transform: translate3d(0, 0, 0) !important;
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   pointer-events: none;
   user-select: none;
+  will-change: auto;
 }
 
 .home-container.intro-active .intro-duplicate {
@@ -53,10 +67,6 @@
   opacity: 0;
 }
 
-.bg-filmstrip::-webkit-scrollbar {
-  display: none;
-}
-
 .bg-filmstrip:active {
   cursor: grabbing;
 }
@@ -67,9 +77,12 @@
   align-items: flex-end;
   flex-shrink: 0;
   transform-style: preserve-3d;
-  backface-visibility: visible;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   will-change: transform, opacity;
   transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .bg-thumb img {
@@ -82,11 +95,16 @@
   display: block;
   border-radius: 6px;
   filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
   opacity: 0.9;
-  transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+  transition: filter 0.35s ease, -webkit-filter 0.35s ease, opacity 0.35s ease;
   user-select: none;
-  /* Prevents native image drag */
+  -webkit-user-select: none;
   -webkit-user-drag: none;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 [data-theme="light"] .bg-thumb img {
@@ -96,8 +114,8 @@
 .bg-thumb:hover img,
 .bg-thumb--center img {
   filter: grayscale(0%);
+  -webkit-filter: grayscale(0%);
   opacity: 1;
-  transform: scale(1);
 }
 
 .cursor-tooltip {
@@ -111,7 +129,6 @@
   font-family: 'Inter', "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
-  /* text-transform: uppercase; */
   border-radius: 0px;
   letter-spacing: 0.03em;
   white-space: nowrap;
@@ -135,7 +152,7 @@
     perspective: 800px;
   }
 
-  .bg-filmstrip {
+  .bg-filmstrip-track {
     padding: 0 1.5rem;
     /* Matched 1.5rem mobile header padding */
   }
