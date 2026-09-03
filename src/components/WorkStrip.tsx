@@ -360,7 +360,13 @@ const WorkStrip: React.FC<WorkStripProps> = ({
         nominalSpacing =
           projectCount > 1 ? (lastX - firstX) / (projectCount - 1) : 400;
 
-        maxLayer = Math.max(1, Math.floor(projectCount / 2));
+        // Linear distance from centerAnchorIdx without circular wrap:
+        // Seam is between the final primary card and index 0 so that Card 0 is the leftmost card in the strip
+        maxLayer = Math.max(
+          centerAnchorIdx,
+          projectCount - 1 - centerAnchorIdx,
+          1
+        );
 
         ROTATION_END = -(centerAnchorIdx / projectCount) * 2 * Math.PI;
         ROTATION_START = ROTATION_END - ROTATION_AMOUNT;
@@ -496,10 +502,8 @@ const WorkStrip: React.FC<WorkStripProps> = ({
             const thumb = thumbRefs.current[i];
             if (!thumb) continue;
 
-            let diff = i - centerAnchorIdx;
-            while (diff > projectCount / 2) diff -= projectCount;
-            while (diff < -projectCount / 2) diff += projectCount;
-            const signedOffset = diff;
+            // Linear offset from center anchor (seam is between N-1 and 0)
+            const signedOffset = i - centerAnchorIdx;
             const layer = Math.abs(signedOffset);
             const direction = Math.sign(signedOffset); // -1 for left, +1 for right, 0 for center
 
