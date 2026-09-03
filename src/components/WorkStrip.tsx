@@ -123,6 +123,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
   const homeRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
   const navigate = useNavigate();
 
@@ -132,22 +133,22 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
   // Carousel dragging & interaction states
   const [isPaused, setIsPaused] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const isMouseDownRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartPosRef = useRef(0);
   const resumeTimeout = useRef<number | null>(null);
 
   // Touch drag state
-  const touchStartX = useRef(0);
-  const touchScrollLeft = useRef(0);
-  const isTouchDragging = useRef(false);
+  const touchStartXRef = useRef(0);
+  const touchStartPosRef = useRef(0);
+  const isTouchDraggingRef = useRef(false);
 
   // Center-item highlight: card in center of screen is in color (grayscale 0%), others are black & white (grayscale 100%)
   const [centerIndex, setCenterIndex] = useState<number | null>(null);
   const currentCenterIndexRef = useRef<number | null>(null);
   const [cursor, setCursor] = useState({ show: false, text: "", x: 0, y: 0 });
 
-  // Persistent float scroll offset to prevent browser subpixel scroll truncation
+  // Persistent float scroll offset for full GPU subpixel float precision
   const scrollPosRef = useRef(0);
 
   // Cached layout metrics to prevent layout thrashing (forced reflows) during animation frames
@@ -178,11 +179,10 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     cardCentersRef.current = centers;
   }, [projectCount]);
 
-  // Find which thumb is closest to the center of the strip container without layout thrashing
+  // Find which thumb is closest to the center of the viewport without layout thrashing
   const updateCenterIndex = useCallback(() => {
-    if (!stripRef.current) return;
-    const containerWidth = containerWidthRef.current || stripRef.current.clientWidth;
-    const currentScrollCenter = (scrollPosRef.current || stripRef.current.scrollLeft) + containerWidth / 2;
+    const containerWidth = containerWidthRef.current || (stripRef.current ? stripRef.current.clientWidth : window.innerWidth);
+    const currentScrollCenter = scrollPosRef.current + containerWidth / 2;
 
     const centers = cardCentersRef.current;
     if (centers.length === 0) {
@@ -206,9 +206,9 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     }
   }, [measureMetrics]);
 
-  // Native ultra-smooth autoscroll pan at constant velocity in a seamless infinite loop
+  // GPU-accelerated ultra-smooth autoscroll pan at constant velocity in a seamless infinite loop
   useAnimationFrame((_, delta) => {
-    if (!isAutoscrollActive || !stripRef.current || isPaused || isMouseDown) return;
+    if (!isAutoscrollActive || !trackRef.current || isPaused || isMouseDownRef.current || isTouchDraggingRef.current) return;
 
     const singleSetWidth = singleSetWidthRef.current;
     if (singleSetWidth <= 0) {
@@ -216,9 +216,9 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       return;
     }
 
-    // Smooth continuous rolling speed (~0.35px per 16.6ms frame)
-    const normalSpeed = 0.35;
-    const clampedDelta = Math.min(delta, 100);
+    // Smooth continuous rolling speed (~0.4px per 16.6ms frame)
+    const normalSpeed = 0.38;
+    const clampedDelta = Math.min(delta, 64);
     scrollPosRef.current += normalSpeed * (clampedDelta / 16.667);
 
     // Seamless zero-jump modulo wrap
@@ -228,10 +228,11 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       scrollPosRef.current += singleSetWidth;
     }
 
-    stripRef.current.scrollLeft = scrollPosRef.current;
+    // Direct GPU compositor translate3d - 0 reflow, full subpixel precision, locked 60fps/120Hz
+    trackRef.current.style.transform = `translate3d(${-scrollPosRef.current.toFixed(2)}px, 0px, 0px)`;
 
     // Fast zero-reflow center calculation
-    const containerWidth = containerWidthRef.current || stripRef.current.clientWidth;
+    const containerWidth = containerWidthRef.current || (stripRef.current ? stripRef.current.clientWidth : window.innerWidth);
     const currentScrollCenter = scrollPosRef.current + containerWidth / 2;
 
     const centers = cardCentersRef.current;
@@ -253,7 +254,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     }
   });
 
-  // Re-measure on resize and window events
+  // Re-measure on resize and orientation changes
   useEffect(() => {
     measureMetrics();
     const handleResize = () => {
@@ -261,16 +262,12 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       updateCenterIndex();
     };
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
   }, [measureMetrics, updateCenterIndex]);
-
-  // Center update on manual scroll
-  useEffect(() => {
-    const el = stripRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", updateCenterIndex, { passive: true });
-    return () => el.removeEventListener("scroll", updateCenterIndex);
-  }, [updateCenterIndex]);
 
   // ── AUTHORITATIVE 3D INTRO ANIMATION CONTROLLER ─────────────────────────────
   useEffect(() => {
@@ -290,8 +287,6 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     ) {
       return;
     }
-
-
 
     const runId = ++globalRunId;
     let animationFrameId: number | null = null;
@@ -313,9 +308,10 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
       setIsAutoscrollActive(false);
       setIsInteractive(false);
-      if (stripRef.current) {
-        stripRef.current.scrollLeft = 0;
+      if (trackRef.current) {
+        trackRef.current.style.transform = "translate3d(0px, 0px, 0px)";
       }
+      scrollPosRef.current = 0;
 
       // Ensure duplicate cards remain completely hidden from the start
       for (let i = projectCount; i < thumbRefs.current.length; i++) {
@@ -358,8 +354,8 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
       if (isCancelled) return;
 
-      if (stripRef.current) {
-        stripRef.current.scrollLeft = 0;
+      if (trackRef.current) {
+        trackRef.current.style.transform = "translate3d(0px, 0px, 0px)";
       }
 
       const clamp = (min: number, val: number, max: number) =>
@@ -548,7 +544,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
             thumb.style.opacity = ringOpacity.toFixed(3);
           }
         } else {
-          // ── PHASE: Paired Center-Out Unfolding & Precision Landing (Requirements 2, 3, 4, 5, 6) ──
+          // ── PHASE: Paired Center-Out Unfolding & Precision Landing ──
           if (globalControllerStatus !== "landing") {
             globalControllerStatus = "landing";
             console.debug("[intro]", runId, "landing");
@@ -556,15 +552,12 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
           const unfoldElapsed = elapsed - DURATION_ROTATION;
           const u = clamp(0, unfoldElapsed / DURATION_UNFOLD, 1);
-          // Zero endpoint velocity smootherstep for the global unfold progress
           const globalUnfoldProgress = smootherstep(u);
 
-          // Paired center-out propagation settings (Requirement 3)
           const maxStagger = 0.28;
           const pairDelay = maxStagger / maxLayer;
           const pairDuration = 1.0 - maxStagger;
 
-          // Stage B (Precision settlement) blends smoothly over final 25% (Requirement 5)
           const settleStart = 0.75;
           const settleWeight =
             globalUnfoldProgress <= settleStart
@@ -573,7 +566,6 @@ const WorkStrip: React.FC<WorkStripProps> = ({
                   (globalUnfoldProgress - settleStart) / (1 - settleStart)
                 );
 
-          // Center anchor smoothly eases toward resting carousel center for seamless zero-jump handoff
           const centerAnchorX =
             (1 - globalUnfoldProgress) * viewportCenterX +
             globalUnfoldProgress * restingCards[centerAnchorIdx].finalCardCenterX;
@@ -583,12 +575,10 @@ const WorkStrip: React.FC<WorkStripProps> = ({
             const thumb = thumbRefs.current[i];
             if (!thumb) continue;
 
-            // Linear offset from center anchor (seam is between N-1 and 0)
             const signedOffset = i - centerAnchorIdx;
             const layer = Math.abs(signedOffset);
-            const direction = Math.sign(signedOffset); // -1 for left, +1 for right, 0 for center
+            const direction = Math.sign(signedOffset);
 
-            // Paired layer progress: both cards in the layer have identical pairProgress & easePair (Requirement 2 & 3)
             const rawPair =
               (globalUnfoldProgress - layer * pairDelay) / pairDuration;
             const pairProgress = clamp(0, rawPair, 1);
@@ -596,32 +586,24 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
             const end = ringEndState[i];
 
-            // ── Stage A: Symmetrical Center-Out Coordinates ──────────────────
-            // Outward symmetrical spacing from center anchor
+            // Stage A: Symmetrical Center-Out Coordinates
             const outwardDistance = layer * nominalSpacing;
             const symFlatX = centerAnchorX + direction * outwardDistance;
 
-            // 1. Mirrored horizontal position
             const symX =
               (1 - easePair) * (centerAnchorX + end.ringX) +
               easePair * symFlatX;
 
-            // 2. Matching vertical position: moves gradually toward carousel baseline
             const initialRingY = viewportCenterY + end.ringY;
             const symY =
               (1 - easePair) * initialRingY + easePair * targetBaselineY;
 
-            // 3. Matching depth Z: straightens smoothly to 0
             const symZ = (1 - easePair) * end.ringZ;
-
-            // 4. Mirrored rotateY: straightens smoothly to 0
             const symRotateY = (1 - easePair) * end.ringRotateY;
-
-            // 5. Matching scale: grows smoothly to 1.0
             const symScale =
               ringEndCardScale + (1 - ringEndCardScale) * easePair;
 
-            // ── Stage B: Precision Settlement into Measured Carousel (Requirement 5) ──
+            // Stage B: Precision Settlement
             const currentTargetX =
               (1 - settleWeight) * symX +
               settleWeight * restingCards[i].finalCardCenterX;
@@ -633,7 +615,6 @@ const WorkStrip: React.FC<WorkStripProps> = ({
             const currentScale =
               (1 - settleWeight) * symScale + settleWeight * 1.0;
 
-            // Delta transforms relative to resting DOM layout
             const deltaX =
               currentTargetX - restingCards[i].finalCardCenterX;
             const deltaY =
@@ -648,7 +629,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
         animationFrameId = requestAnimationFrame(animateStep);
       };
 
-      // Completion Ritual (Requirement 6 & 7)
+      // Completion Ritual
       function completeRitual() {
         // 1. Ensure primary cards reach clean identity
         for (let i = 0; i < projectCount; i++) {
@@ -660,7 +641,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
           }
         }
 
-        // 2. Remove intro mode class so canonical filmstrip layout, gap: 1rem, and filters take full effect
+        // 2. Remove intro mode class
         setIntroMode(false);
 
         // 3. Immediately on next animation frame: reveal duplicates, clear transforms, enable interactions
@@ -690,14 +671,15 @@ const WorkStrip: React.FC<WorkStripProps> = ({
           updateCenterIndex();
 
           // 7. Start carousel autoscroll rolling immediately in an infinite seamless loop
-          scrollPosRef.current = stripRef.current ? stripRef.current.scrollLeft : 0;
+          scrollPosRef.current = 0;
+          if (trackRef.current) {
+            trackRef.current.style.transform = "translate3d(0px, 0px, 0px)";
+          }
           setIsAutoscrollActive(true);
           onIntroCompleteRef.current?.();
         });
       }
 
-      // Resize safety listener (Requirement 9): cleanly finalize if substantial resize during intro
-      // Dynamically adapt geometry on resize so intro continues seamlessly across all screen sizes
       const handleResizeDuringIntro = () => {
         updateGeometryAndLayout();
       };
@@ -729,44 +711,40 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 
   // ── Mouse handlers ──────────────────────────────────────────────────────────
 
-  const handleWheel = () => {
-    if (!isInteractive) return;
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!isInteractive || !trackRef.current) return;
     setIsPaused(true);
-    if (stripRef.current) {
-      let pos = stripRef.current.scrollLeft;
-      const singleSetWidth = singleSetWidthRef.current;
-      if (singleSetWidth > 0) {
-        while (pos >= singleSetWidth) pos -= singleSetWidth;
-        while (pos < 0) pos += singleSetWidth;
-        stripRef.current.scrollLeft = pos;
-      }
-      scrollPosRef.current = pos;
-      updateCenterIndex();
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    scrollPosRef.current += delta;
+    const singleSetWidth = singleSetWidthRef.current;
+    if (singleSetWidth > 0) {
+      while (scrollPosRef.current >= singleSetWidth) scrollPosRef.current -= singleSetWidth;
+      while (scrollPosRef.current < 0) scrollPosRef.current += singleSetWidth;
     }
+    trackRef.current.style.transform = `translate3d(${-scrollPosRef.current.toFixed(2)}px, 0px, 0px)`;
+    updateCenterIndex();
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!isInteractive || !stripRef.current) return;
-    setIsMouseDown(true);
+    if (!isInteractive || !trackRef.current) return;
+    isMouseDownRef.current = true;
     setIsPaused(true);
-    setStartX(e.pageX);
-    setScrollLeft(stripRef.current.scrollLeft);
-    scrollPosRef.current = stripRef.current.scrollLeft;
+    dragStartXRef.current = e.pageX;
+    dragStartPosRef.current = scrollPosRef.current;
   };
 
   const handleMouseLeaveContainer = () => {
     if (!isInteractive) return;
-    setIsMouseDown(false);
+    isMouseDownRef.current = false;
     setIsPaused(false);
     setCursor((prev) => ({ ...prev, show: false }));
   };
 
   const handleMouseUp = () => {
     if (!isInteractive) return;
-    setIsMouseDown(false);
-    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
+    isMouseDownRef.current = false;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -774,60 +752,57 @@ const WorkStrip: React.FC<WorkStripProps> = ({
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isInteractive) return;
     setCursor((prev) => ({ ...prev, x: e.clientX, y: e.clientY }));
-    if (!isMouseDown || !stripRef.current) return;
+    if (!isMouseDownRef.current || !trackRef.current) return;
     e.preventDefault();
-    const walk = (startX - e.pageX) * 1.5;
-    let newPos = scrollLeft + walk;
+    const deltaX = e.pageX - dragStartXRef.current;
+    let newPos = dragStartPosRef.current - deltaX;
     const singleSetWidth = singleSetWidthRef.current;
     if (singleSetWidth > 0) {
       while (newPos >= singleSetWidth) newPos -= singleSetWidth;
       while (newPos < 0) newPos += singleSetWidth;
     }
-    stripRef.current.scrollLeft = newPos;
     scrollPosRef.current = newPos;
+    trackRef.current.style.transform = `translate3d(${-newPos.toFixed(2)}px, 0px, 0px)`;
     updateCenterIndex();
   };
 
-  // ── Touch handlers ──────────────────────────────────────────────────────────
+  // ── Touch handlers (Native 1:1 hardware drag on iPhone / Mobile) ───────────
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isInteractive || !stripRef.current) return;
-    touchStartX.current = e.touches[0].pageX;
-    touchScrollLeft.current = stripRef.current.scrollLeft;
-    scrollPosRef.current = stripRef.current.scrollLeft;
-    isTouchDragging.current = true;
+    if (!isInteractive || !trackRef.current || e.touches.length === 0) return;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartPosRef.current = scrollPosRef.current;
+    isTouchDraggingRef.current = true;
     setIsPaused(true);
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isInteractive || !isTouchDragging.current || !stripRef.current) return;
-    const x = e.touches[0].pageX;
-    const walk = (touchStartX.current - x) * 1.5;
-    let newPos = touchScrollLeft.current + walk;
+    if (!isInteractive || !isTouchDraggingRef.current || !trackRef.current || e.touches.length === 0) return;
+    const deltaX = e.touches[0].clientX - touchStartXRef.current;
+    let newPos = touchStartPosRef.current - deltaX;
     const singleSetWidth = singleSetWidthRef.current;
 
     // Seamless wrap during touch drag
     if (singleSetWidth > 0) {
       while (newPos >= singleSetWidth) {
         newPos -= singleSetWidth;
-        touchScrollLeft.current -= singleSetWidth;
+        touchStartPosRef.current -= singleSetWidth;
       }
       while (newPos < 0) {
         newPos += singleSetWidth;
-        touchScrollLeft.current += singleSetWidth;
+        touchStartPosRef.current += singleSetWidth;
       }
     }
 
-    stripRef.current.scrollLeft = newPos;
     scrollPosRef.current = newPos;
+    trackRef.current.style.transform = `translate3d(${-newPos.toFixed(2)}px, 0px, 0px)`;
     updateCenterIndex();
   };
 
   const handleTouchEnd = () => {
     if (!isInteractive) return;
-    isTouchDragging.current = false;
-    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
+    isTouchDraggingRef.current = false;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -848,47 +823,48 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       onTouchEnd={handleTouchEnd}
     >
       <div className="bg-filmstrip" ref={stripRef}>
-        {[0, 1, 2].flatMap((setIdx) =>
-          projects.map((p, i) => {
-            const globalIdx = setIdx * projectCount + i;
-            const isDuplicate = setIdx > 0;
-            const isCenter = centerIndex === globalIdx;
+        <div className="bg-filmstrip-track" ref={trackRef}>
+          {[0, 1, 2].flatMap((setIdx) =>
+            projects.map((p, i) => {
+              const globalIdx = setIdx * projectCount + i;
+              const isDuplicate = setIdx > 0;
+              const isCenter = centerIndex === globalIdx;
 
-            return (
-              <div
-                key={p.id + `_set${setIdx}_` + i}
-                className={`bg-thumb${isCenter ? " bg-thumb--center" : ""}${isDuplicate ? " intro-duplicate" : ""}`}
-                ref={(el) => {
-                  thumbRefs.current[globalIdx] = el;
-                }}
-                onMouseEnter={() => {
-                  if (isInteractive) {
-                    setCursor((prev) => ({ ...prev, show: true, text: p.name }));
-                  }
-                }}
-                onMouseLeave={() => {
-                  setCursor((prev) => ({ ...prev, show: false }));
-                }}
-                onClick={(e) => {
-                  if (!isInteractive) return;
-                  if (
-                    stripRef.current &&
-                    Math.abs(e.pageX - stripRef.current.offsetLeft - startX) < 5
-                  ) {
-                    navigate(`/work/${p.id}`);
-                  }
-                }}
-              >
-                <img
-                  src={getMediaUrl(p.images[0])}
-                  alt={p.name}
-                  draggable={false}
-                  onLoad={measureMetrics}
-                />
-              </div>
-            );
-          })
-        )}
+              return (
+                <div
+                  key={p.id + `_set${setIdx}_` + i}
+                  className={`bg-thumb${isCenter ? " bg-thumb--center" : ""}${isDuplicate ? " intro-duplicate" : ""}`}
+                  ref={(el) => {
+                    thumbRefs.current[globalIdx] = el;
+                  }}
+                  onMouseEnter={() => {
+                    if (isInteractive) {
+                      setCursor((prev) => ({ ...prev, show: true, text: p.name }));
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setCursor((prev) => ({ ...prev, show: false }));
+                  }}
+                  onClick={(e) => {
+                    if (!isInteractive) return;
+                    if (
+                      Math.abs(e.pageX - dragStartXRef.current) < 5
+                    ) {
+                      navigate(`/work/${p.id}`);
+                    }
+                  }}
+                >
+                  <img
+                    src={getMediaUrl(p.images[0])}
+                    alt={p.name}
+                    draggable={false}
+                    onLoad={measureMetrics}
+                  />
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
 
       {cursor.show && isInteractive && (
@@ -904,4 +880,3 @@ const WorkStrip: React.FC<WorkStripProps> = ({
 };
 
 export default WorkStrip;
-
