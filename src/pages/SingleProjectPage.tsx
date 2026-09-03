@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Header from "../components/Header";
 import Navigation from "../components/Navigation";
-import { allProjects } from "../data/projects";
+import { allProjects, getMediaUrl, getMediaBackground, getMediaPadding } from "../data/projects";
 import "../Styles/SingleProjectPage.css";
 
 const SingleProjectPage: React.FC = () => {
@@ -44,14 +44,31 @@ const SingleProjectPage: React.FC = () => {
         </div>
 
         <div className="project-images-grid">
-          {project.images.map((mediaUrl, idx) => {
-            const isVideo = mediaUrl.toLowerCase().endsWith('.mp4') || mediaUrl.toLowerCase().endsWith('.webm');
-            
+          {project.images.map((mediaItem, idx) => {
+            const url = getMediaUrl(mediaItem);
+            const bg = getMediaBackground(mediaItem);
+            const padding = getMediaPadding(mediaItem);
+            const isVideo = url.toLowerCase().endsWith('.mp4') || url.toLowerCase().endsWith('.webm');
+
+            const itemStyle: React.CSSProperties = {
+              ...(typeof bg === "string"
+                ? ({ backgroundColor: bg, "--bg-light": bg, "--bg-dark": bg } as React.CSSProperties)
+                : {}),
+              ...(typeof bg === "object" && bg !== null
+                ? ({ "--bg-light": bg.light, "--bg-dark": bg.dark } as React.CSSProperties)
+                : {}),
+              ...(padding ? { padding } : {}),
+            };
+
             return (
-              <div key={idx} className="image-item">
+              <div
+                key={idx}
+                className="image-item"
+                style={Object.keys(itemStyle).length > 0 ? itemStyle : undefined}
+              >
                 {isVideo ? (
                   <video
-                    src={mediaUrl}
+                    src={url}
                     className="project-image"
                     autoPlay
                     loop
@@ -60,7 +77,7 @@ const SingleProjectPage: React.FC = () => {
                   />
                 ) : (
                   <img
-                    src={mediaUrl}
+                    src={url}
                     alt={`${project.name} ${idx + 1}`}
                     className="project-image"
                   />

@@ -45,7 +45,8 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  gap: 1rem; /* Detta tvingar ett exakt och orubbligt gap på 1rem fram till bilderna */
+  gap: 1rem;
+  /* Detta tvingar ett exakt och orubbligt gap på 1rem fram till bilderna */
 }
 
 .project-info {
@@ -54,7 +55,8 @@
   display: flex;
   flex-direction: column;
   gap: 0rem;
-  margin: 0; /* Marginal hanteras nu säkert av parent container */
+  margin: 0;
+  /* Marginal hanteras nu säkert av parent container */
 }
 
 .project-name,
@@ -101,14 +103,24 @@ h2 {
 
   /* wrappern behåller vi */
   .image-item {
-    display: block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     max-width: 600px;
     margin-bottom: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: var(--bg-light, transparent);
   }
 
   -moz-column-break-inside: avoid;
   break-inside: avoid-column;
+}
+
+[data-theme="dark"] .image-item {
+  background-color: var(--bg-dark, var(--bg-light, transparent));
 }
 
 /* bilden fyller kolumnen */
@@ -118,6 +130,7 @@ h2 {
   object-fit: cover;
   object-position: center;
   cursor: pointer;
+  border-radius: 12px;
   transition: transform 0.2s ease;
 }
 
