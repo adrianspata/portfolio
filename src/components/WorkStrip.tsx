@@ -169,15 +169,24 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     setCenterIndex((prev) => (prev !== closestIdx ? closestIdx : prev));
   }, []);
 
+  // Persistent float scroll offset to prevent browser subpixel scroll truncation
+  const scrollPosRef = useRef(0);
+
   // Native smooth autoscroll pan at original speed (0.3px per frame) in a continuous loop
   useAnimationFrame((_, delta) => {
     if (!isAutoscrollActive || !stripRef.current || isPaused || isMouseDown) return;
 
+    // Original carousel rolling speed: 0.3px per 16.6ms frame
     const normalSpeed = 0.3;
-    stripRef.current.scrollLeft += normalSpeed * (delta / 16.6);
-    if (stripRef.current.scrollLeft >= stripRef.current.scrollWidth / 2) {
-      stripRef.current.scrollLeft -= stripRef.current.scrollWidth / 2;
+    scrollPosRef.current += normalSpeed * (delta / 16.6);
+
+    // Seamless infinite wrap
+    const halfWidth = stripRef.current.scrollWidth / 2;
+    if (halfWidth > 0 && scrollPosRef.current >= halfWidth) {
+      scrollPosRef.current -= halfWidth;
     }
+
+    stripRef.current.scrollLeft = scrollPosRef.current;
     updateCenterIndex();
   });
 
@@ -360,8 +369,6 @@ const WorkStrip: React.FC<WorkStripProps> = ({
         nominalSpacing =
           projectCount > 1 ? (lastX - firstX) / (projectCount - 1) : 400;
 
-        // Linear distance from centerAnchorIdx without circular wrap:
-        // Seam is between the final primary card and index 0 so that Card 0 is the leftmost card in the strip
         maxLayer = Math.max(
           centerAnchorIdx,
           projectCount - 1 - centerAnchorIdx,
@@ -606,18 +613,16 @@ const WorkStrip: React.FC<WorkStripProps> = ({
           updateCenterIndex();
 
           // 6. Start carousel autoscroll rolling immediately in an infinite loop
+          scrollPosRef.current = stripRef.current ? stripRef.current.scrollLeft : 0;
           setIsAutoscrollActive(true);
           onIntroCompleteRef.current?.();
         });
       }
 
-      // Resize safety listener: finalize if window resizes during intro
-      const initialW = window.innerWidth;
+      // Resize safety listener (Requirement 9): cleanly finalize if substantial resize during intro
+      // Dynamically adapt geometry on resize so intro continues seamlessly across all screen sizes
       const handleResizeDuringIntro = () => {
-        if (Math.abs(window.innerWidth - initialW) > 60) {
-          cancelThisRun();
-          completeRitual();
-        }
+        updateGeometryAndLayout();
       };
       window.addEventListener("resize", handleResizeDuringIntro);
 
@@ -650,6 +655,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
   const handleWheel = () => {
     if (!isInteractive) return;
     setIsPaused(true);
+    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -660,7 +666,8 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     setIsPaused(true);
     setStartX(e.pageX - stripRef.current.offsetLeft);
     setScrollLeft(stripRef.current.scrollLeft);
-    };
+    scrollPosRef.current = stripRef.current.scrollLeft;
+  };
 
   const handleMouseLeaveContainer = () => {
     if (!isInteractive) return;
@@ -672,6 +679,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
   const handleMouseUp = () => {
     if (!isInteractive) return;
     setIsMouseDown(false);
+    if (stripRef.current) scrollPosRef.current = stripRef.current.scrollLeft;
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
     resumeTimeout.current = window.setTimeout(() => setIsPaused(false), 800);
   };
@@ -684,7 +692,8 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     const x = e.pageX - stripRef.current.offsetLeft;
     const walk = (x - startX) * 1.5;
     stripRef.current.scrollLeft = scrollLeft - walk;
-    };
+    scrollPosRef.current = stripRef.current.scrollLeft;
+  };
 
   // ── Touch handlers ──────────────────────────────────────────────────────────
 
@@ -692,6 +701,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
     if (!isInteractive || !stripRef.current) return;
     touchStartX.current = e.touches[0].pageX;
     touchScrollLeft.current = stripRef.current.scrollLeft;
+    scrollPosRef.current = stripRef.current.scrollLeft;
     isTouchDragging.current = true;
     setIsPaused(true);
     if (resumeTimeout.current) clearTimeout(resumeTimeout.current);
@@ -712,6 +722,7 @@ const WorkStrip: React.FC<WorkStripProps> = ({
       touchScrollLeft.current += stripRef.current.scrollWidth / 2;
     }
 
+    scrollPosRef.current = stripRef.current.scrollLeft;
     updateCenterIndex();
   };
 
