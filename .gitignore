@@ -32,6 +32,5 @@ coverage/
 # OS generated files
 Thumbs.db
 
-# Image ignore example (ta bort om du vill ha bilder i repo)
-# *.jpg
-# *.png
+# Image and video ignore
+*.mp4
